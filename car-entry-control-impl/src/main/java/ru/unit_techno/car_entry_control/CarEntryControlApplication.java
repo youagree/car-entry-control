@@ -1,4 +1,4 @@
-package ru.unit.techno.car.entry.control;
+package ru.unit_techno.car_entry_control;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

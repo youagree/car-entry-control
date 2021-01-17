@@ -1,0 +1,122 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <!-- Tables -->
+  <changeSet id="2021-01-17-create-sequence-car" author="ESV">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <sequenceExists sequenceName="squd_car_id_seq"/>
+      </not>
+    </preConditions>
+    <createSequence sequenceName="squd_car_id_seq" incrementBy="50"/>
+  </changeSet>
+
+  <changeSet id="2021-01-17-create-table-cars" author="ESV">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="cars"/>
+      </not>
+    </preConditions>
+    <createTable tableName="cars">
+      <column name="car_id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="rfid_label_id" type="BIGINT"/>
+      <column name="car_on_the_territory" type="BOOLEAN"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="2021-01-17-create-sequence-rfid_label" author="ESV">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <sequenceExists sequenceName="squd_rfid_label_id_seq"/>
+      </not>
+    </preConditions>
+    <createSequence sequenceName="squd_rfid_label_id_seq" incrementBy="50"/>
+  </changeSet>
+
+  <changeSet id="2021-01-17-create-table-rfid_labels" author="ESV">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="rfid_labels"/>
+      </not>
+    </preConditions>
+    <createTable tableName="rfid_labels">
+      <column name="rfid_label_id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="rfid_label_value" type="BIGINT"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="2021-01-17-create-sequence-squd_event_id_seq" author="ESV">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <sequenceExists sequenceName="squd_event_id_seq"/>
+      </not>
+    </preConditions>
+    <createSequence sequenceName="squd_event_id_seq" incrementBy="50"/>
+  </changeSet>
+
+  <changeSet id="2021-01-17-create-table-events" author="ESV">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="events"/>
+      </not>
+    </preConditions>
+    <createTable tableName="events">
+      <column name="event_id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="rfid_label_value" type="BIGINT"/>
+      <column name="entry_device_value" type="BIGINT"/>
+      <column name="created_at" type="TIMESTAMP"/>
+      <column name="finished_at" type="TIMESTAMP"/>
+      <column name="event_type" type="VARCHAR"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="2021-01-17-create-sequence-squd_entry_device_id_seq" author="ESV">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <sequenceExists sequenceName="squd_entry_device_id_seq"/>
+      </not>
+    </preConditions>
+    <createSequence sequenceName="squd_entry_device_id_seq" incrementBy="50"/>
+  </changeSet>
+
+  <changeSet id="2021-01-17-create-table-entry_devices" author="ESV">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="entry_devices"/>
+      </not>
+    </preConditions>
+    <createTable tableName="entry_devices">
+      <column name="entry_device_id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="entry_device_value" type="BIGINT"/>
+    </createTable>
+  </changeSet>
+
+  <!-- Foreign keys & indexes -->
+  <changeSet author="ESV" id="cars-createIndex">
+    <createIndex indexName="idx_cars_rfid_label_id" tableName="cars">
+      <column name="rfid_label_id"/>
+    </createIndex>
+    <comment>cars table create fk index</comment>
+  </changeSet>
+
+  <changeSet author="ESV" id="create-foreign-key-cars">
+    <addForeignKeyConstraint baseColumnNames="rfid_label_id"
+      baseTableName="cars"
+      constraintName="fk_cars_rfid_label_id"
+      onDelete="NO ACTION"
+      onUpdate="NO ACTION"
+      referencedColumnNames="rfid_label_id"
+      referencedTableName="rfid_labels"/>
+  </changeSet>
+
+</databaseChangeLog>
