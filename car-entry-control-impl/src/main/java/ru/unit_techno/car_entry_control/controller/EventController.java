@@ -15,7 +15,7 @@ public class EventController {
   @PostMapping("/event")
   @ResponseStatus(HttpStatus.OK)
   public String eventHandler(String rfidLabel) {
-    return "access granted";
+    return "S1\r\nIN\r\n";
   }
 
 }
