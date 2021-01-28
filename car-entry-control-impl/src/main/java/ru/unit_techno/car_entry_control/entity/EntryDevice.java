@@ -19,6 +19,12 @@ public class EntryDevice {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "squd_entry_device_id_seq")
     private Long id;
 
-    @Column(name = "entry_device_value")
-    private Long entryDeviceValue;
+    @Column(name = "entry_device_slug")
+    private Long slug;
+
+    @Column(name = "entry_device_ip_address")
+    private String direction;
+
+    @Column(name = "entry_device_ip_address")
+    private String ipAddress;
 }
