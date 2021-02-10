@@ -1,5 +1,6 @@
 package ru.unit_techno.car_entry_control.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
@@ -10,14 +11,10 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class EventService {
 
     private RfidLabelRepository rfidLabelRepository;
-
-    @Autowired
-    public EventService(RfidLabelRepository rfidLabelRepository) {
-        this.rfidLabelRepository = rfidLabelRepository;
-    }
 
     public String rfidLabelCheck (String rfidLabel) throws Exception {
         Long longRfidLabel = Long.parseLong(rfidLabel);
