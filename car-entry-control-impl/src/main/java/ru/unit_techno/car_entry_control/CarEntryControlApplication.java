@@ -9,5 +9,4 @@ public class CarEntryControlApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CarEntryControlApplication.class, args);
 	}
-
 }

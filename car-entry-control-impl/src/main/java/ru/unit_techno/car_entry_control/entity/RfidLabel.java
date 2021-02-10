@@ -1,6 +1,7 @@
 package ru.unit_techno.car_entry_control.entity;
 
 import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,10 +24,9 @@ public class RfidLabel {
     @Column(name = "rfid_label_value")
     private Long rfidLabelValue;
 
-    @Column(name = "is_active")
-    private boolean ACTIVE;
+    @Column
+    private String state;
 
     @OneToOne(mappedBy = "rfidLabel")
     private Car car;
-
 }
