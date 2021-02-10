@@ -43,11 +43,13 @@
         <tableExists tableName="rfid_labels"/>
       </not>
     </preConditions>
+    <!-- ТАБЛИЦА RFID_LABELS -->
     <createTable tableName="rfid_labels">
       <column name="rfid_label_id" type="BIGINT">
         <constraints nullable="false" primaryKey="true"/>
       </column>
-      <column name="rfid_label_value" type="varchar"/>
+      <column name="is_active" type="BOOLEAN"/>
+      <column name="rfid_label_value" type="BIGINT"/>
     </createTable>
   </changeSet>
 

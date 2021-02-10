@@ -21,7 +21,10 @@ public class RfidLabel {
     private Long id;
 
     @Column(name = "rfid_label_value")
-    private String rfidLabelValue;
+    private Long rfidLabelValue;
+
+    @Column(name = "is_active")
+    private boolean ACTIVE;
 
     @OneToOne(mappedBy = "rfidLabel")
     private Car car;
