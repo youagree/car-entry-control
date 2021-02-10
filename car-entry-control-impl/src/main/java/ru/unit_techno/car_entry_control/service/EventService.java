@@ -22,15 +22,17 @@ public class EventService {
     public String rfidLabelCheck (String rfidLabel) throws Exception {
         Long longRfidLabel = Long.parseLong(rfidLabel);
         Optional<RfidLabel> label = rfidLabelRepository.findRfidLabelByRfidLabelValue(longRfidLabel);
+        rfidExceptionCheck(label);
+        return label.get().getRfidLabelValue().toString();
+    }
 
-        if (label.isEmpty()) {
+    private void rfidExceptionCheck(Optional<RfidLabel> rfidLabel) throws RfidAccessDeniedException {
+        if (rfidLabel.isEmpty()) {
             throw new EntityNotFoundException("this rfid label is not in the database");
         }
 
-        if (!label.get().isACTIVE()) {
+        if (!rfidLabel.get().isACTIVE()) {
             throw new RfidAccessDeniedException("this rfid label is not active");
         }
-
-        return label.get().getRfidLabelValue().toString();
     }
 }

@@ -103,9 +103,6 @@
         <constraints nullable="false"/>
       </column>
       <column name="entry_device_direction" type="varchar"/>
-      <column name="entry_device_ip_address" type="inet">
-        <constraints nullable="false"/>
-      </column>
     </createTable>
   </changeSet>
 

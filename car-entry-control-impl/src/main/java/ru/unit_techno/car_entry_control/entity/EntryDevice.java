@@ -20,11 +20,8 @@ public class EntryDevice {
     private Long id;
 
     @Column(name = "entry_device_slug")
-    private Long slug;
+    private String slug;
 
-    @Column(name = "entry_device_ip_address")
+    @Column(name = "entry_device_direction")
     private String direction;
-
-    @Column(name = "entry_device_ip_address")
-    private String ipAddress;
 }

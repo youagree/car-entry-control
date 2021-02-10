@@ -1,6 +1,7 @@
 package ru.unit_techno.car_entry_control.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,14 +13,10 @@ import ru.unit_techno.car_entry_control.service.EventService;
 
 @RestController
 @RequestMapping("v1")
+@RequiredArgsConstructor
 public class EventController {
 
     private final EventService eventService;
-
-    @Autowired
-    public EventController(EventService eventService) {
-        this.eventService = eventService;
-    }
 
     @PostMapping("/event")
     @ResponseStatus(HttpStatus.OK)
