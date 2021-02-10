@@ -1,4 +1,4 @@
-package ru.unit_techno.car_entry_control.exception;
+package ru.unit_techno.car_entry_control.exception.custom;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -19,5 +19,5 @@ spring:
   datasource:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/unit_techno?currentSchema=car_entry_control
-    username: postgres
-    password: 1234
+    username: car_entry_admin
+    password: squd
