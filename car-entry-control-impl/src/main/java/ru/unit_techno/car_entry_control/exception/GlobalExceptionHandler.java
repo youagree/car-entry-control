@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler
+    @ExceptionHandler({RfidAccessDeniedException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public void handleRfidAccessDeniedException() {
         log.info("Данная RFID метка не является активной, въезд запрещен.");
