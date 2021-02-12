@@ -3,7 +3,10 @@ package ru.unit_techno.car_entry_control.service;
 import static ru.unit_techno.car_entry_control.util.Utils.bind;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
+import ru.unit_techno.car_entry_control.dto.response.NewRfidLabelMessage;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.exception.custom.RfidAccessDeniedException;
@@ -18,9 +21,10 @@ import java.util.Optional;
 public class EventService {
 
     private final RfidLabelRepository rfidLabelRepository;
+    private final SimpMessagingTemplate brokerMessagingTemplate;
 
-    public String rfidLabelCheck (String rfidLabel) throws Exception {
-        Long longRfidLabel = Long.parseLong(rfidLabel);
+    public String rfidLabelCheck (RfidEntry rfidLabel) throws Exception {
+        Long longRfidLabel = Long.parseLong(rfidLabel.getRfid());
         Optional<RfidLabel> label = rfidLabelRepository.findRfidLabelByRfidLabelValue(longRfidLabel);
         rfidExceptionCheck(label);
         return label.get().getRfidLabelValue().toString();
@@ -40,6 +44,11 @@ public class EventService {
 
         if (rfidLabel.get().getState().equals(StateEnum.NO_ACTIVE.getValue()) ||
             rfidLabel.get().getState().equals(StateEnum.NEW.getValue())) {
+            brokerMessagingTemplate.convertAndSend(
+                    "/topic/newrfidlabel",
+                    new NewRfidLabelMessage()
+                            .setId(rfidLabel.get().getId())
+            );
             throw new RfidAccessDeniedException("this rfid label is not active");
         }
     }
