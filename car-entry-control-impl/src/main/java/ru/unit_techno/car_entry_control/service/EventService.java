@@ -1,10 +1,9 @@
 package ru.unit_techno.car_entry_control.service;
 
-import static ru.unit_techno.car_entry_control.util.Utils.bind;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
+import ru.unit_techno.car_entry_control.aspect.RfidEvent;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.exception.custom.RfidAccessDeniedException;
@@ -28,9 +27,14 @@ public class EventService {
         return label.get().getRfidLabelValue().toString();
     }
 
+    @RfidEvent
     public void create(Long rfidLabel) {
-        rfidLabelRepository.findRfidLabelByRfidLabelValue(rfidLabel).orElseThrow(
-                bind(EntityExistsException::new, "this rfidLabel already exist"));
+        rfidLabelRepository.findRfidLabelByRfidLabelValue(rfidLabel).ifPresentOrElse(
+                r -> rfidLabelRepository.save(new RfidLabel().setRfidLabelValue(rfidLabel)
+                        .setState(StateEnum.NEW.getValue())),
+                EntityExistsException::new);
+
+
         rfidLabelRepository.save(new RfidLabel().setRfidLabelValue(rfidLabel)
                                                 .setState(StateEnum.NEW.getValue()));
     }
