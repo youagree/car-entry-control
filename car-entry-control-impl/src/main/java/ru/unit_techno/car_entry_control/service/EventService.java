@@ -23,21 +23,19 @@ public class EventService {
 
     public String rfidLabelCheck (RfidEntry rfidLabel) throws Exception {
         Long longRfidLabel = rfidLabel.getRfid();
-        Optional<RfidLabel> label = rfidLabelRepository.findRfidLabelByRfidLabelValue(longRfidLabel);
+        Optional<RfidLabel> label = rfidLabelRepository.findByRfidLabelValue(longRfidLabel);
         rfidExceptionCheck(label);
         return label.get().getRfidLabelValue().toString();
     }
 
     @RfidEvent
     public void create(Long rfidLabel) {
-        rfidLabelRepository.findRfidLabelByRfidLabelValue(rfidLabel).ifPresentOrElse(
+        rfidLabelRepository.findByRfidLabelValue(rfidLabel).ifPresentOrElse(
                 r -> rfidLabelRepository.save(new RfidLabel().setRfidLabelValue(rfidLabel)
-                        .setState(StateEnum.NEW.getValue())),
-                EntityExistsException::new);
-
-
-        rfidLabelRepository.save(new RfidLabel().setRfidLabelValue(rfidLabel)
-                                                .setState(StateEnum.NEW.getValue()));
+                        .setState(StateEnum.NEW)),
+                () -> {
+                   throw new EntityExistsException();
+                } );
     }
 
     private void rfidExceptionCheck(Optional<RfidLabel> rfidLabel) throws RfidAccessDeniedException {
@@ -45,8 +43,8 @@ public class EventService {
             throw new EntityNotFoundException("this rfid label is not in the database");
         }
 
-        if (rfidLabel.get().getState().equals(StateEnum.NO_ACTIVE.getValue()) ||
-            rfidLabel.get().getState().equals(StateEnum.NEW.getValue())) {
+        if (rfidLabel.get().getState().equals(StateEnum.NO_ACTIVE) ||
+            rfidLabel.get().getState().equals(StateEnum.NEW)) {
             notificationService.sendNotActive(rfidLabel.get().getRfidLabelValue());
             throw new RfidAccessDeniedException("this rfid label is not active");
         }
