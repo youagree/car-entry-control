@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class RfidEntry {
 
-    @JsonProperty("device_did")
+    @JsonProperty("device_id")
     private Long deviceId;
 
     @JsonProperty("rfid")
-    private String rfid;
+    private Long rfid;
 }

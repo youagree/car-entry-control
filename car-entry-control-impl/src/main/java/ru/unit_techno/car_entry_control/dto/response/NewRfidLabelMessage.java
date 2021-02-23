@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class NewRfidLabelMessage {
 
-    private Long id;
-    private String message = "Активируй пжст новую метку";
+    private Long rfidLabelValue;
+    private String message = "Активируйте новую метку";
 }

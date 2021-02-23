@@ -1,6 +1,10 @@
 server:
   port: 8080
 
+ws:
+  topics:
+    not_active: "/topic/newrfidlabel"
+
 spring:
   application:
     name: control-system
