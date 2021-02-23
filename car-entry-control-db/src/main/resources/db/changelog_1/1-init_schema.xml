@@ -19,6 +19,8 @@
                 <tableExists tableName="cars"/>
             </not>
         </preConditions>
+
+        <!-- ТАБЛИЦА CARS -->
         <createTable tableName="cars">
             <column name="car_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -43,13 +45,16 @@
                 <tableExists tableName="rfid_labels"/>
             </not>
         </preConditions>
+
         <!-- ТАБЛИЦА RFID_LABELS -->
         <createTable tableName="rfid_labels">
             <column name="rfid_label_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="state" type="VARCHAR"/>
-            <column name="rfid_label_value" type="BIGINT"/>
+            <column name="rfid_label_value" type="BIGINT">
+                <constraints unique="true" nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -68,14 +73,15 @@
                 <tableExists tableName="events"/>
             </not>
         </preConditions>
+
+        <!-- ТАБЛИЦА EVENTS -->
         <createTable tableName="events">
             <column name="event_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="rfid_label_value" type="BIGINT"/>
             <column name="entry_device_value" type="BIGINT"/>
-            <column name="created_at" type="TIMESTAMP"/>
-            <column name="finished_at" type="TIMESTAMP"/>
+            <column name="event_time" type="TIMESTAMP"/>
             <column name="event_type" type="VARCHAR"/>
         </createTable>
     </changeSet>
@@ -95,6 +101,8 @@
                 <tableExists tableName="entry_devices"/>
             </not>
         </preConditions>
+
+        <!-- ТАБЛИЦА ENTRY_DEVICES -->
         <createTable tableName="entry_devices">
             <column name="entry_device_id" type="BIGINT" valueSequenceNext="">
                 <constraints nullable="false" primaryKey="true"/>

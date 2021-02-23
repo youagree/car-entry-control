@@ -2,6 +2,7 @@ package ru.unit_techno.car_entry_control.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +26,7 @@ public class EventController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createRfidLabel(Long rfidLabel) {
+    public void createRfidLabel(@RequestParam Long rfidLabel) {
         eventService.create(rfidLabel);
     }
 }
