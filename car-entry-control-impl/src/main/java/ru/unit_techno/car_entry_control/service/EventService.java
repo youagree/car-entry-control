@@ -21,11 +21,11 @@ public class EventService {
     private final WSNotificationService notificationService;
     private final RfidLabelRepository rfidLabelRepository;
 
-    public String rfidLabelCheck (RfidEntry rfidLabel) throws Exception {
+    public Long rfidLabelCheck (RfidEntry rfidLabel) throws Exception {
         Long longRfidLabel = rfidLabel.getRfid();
         Optional<RfidLabel> label = rfidLabelRepository.findRfidLabelByRfidLabelValue(longRfidLabel);
         rfidExceptionCheck(label);
-        return label.get().getRfidLabelValue().toString();
+        return label.get().getId();
     }
 
     @RfidEvent
