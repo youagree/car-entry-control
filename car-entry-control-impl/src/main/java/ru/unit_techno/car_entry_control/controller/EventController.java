@@ -34,6 +34,7 @@ public class EventController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_LENGTH, String.valueOf(rfidEntry.getRfid().toString().length()));
+        headers.set(HttpHeaders.CONTENT_TYPE, "text/plain");
         return new ResponseEntity<>(rfidEntry.getDeviceId(), headers, HttpStatus.OK);
     }
 

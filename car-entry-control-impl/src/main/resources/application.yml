@@ -1,6 +1,10 @@
 server:
   port: 8080
 
+logging:
+  level:
+    org.springframework.web: DEBUG
+
 ws:
   topics:
     not_active: "/topic/newrfidlabel"
