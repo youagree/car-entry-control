@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface RfidLabelRepository extends JpaRepository<RfidLabel, Long> {
-    Optional<RfidLabel> findRfidLabelByRfidLabelValue(Long rfidLabelValue);
+    Optional<RfidLabel> findByRfidLabelValue(Long rfidLabelValue);
 }

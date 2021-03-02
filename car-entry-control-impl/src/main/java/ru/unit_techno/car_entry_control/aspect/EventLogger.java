@@ -25,6 +25,7 @@ public class EventLogger {
         this.eventRepository = eventRepository;
     }
 
+    //TODO сделать прием любых аргументов и на паблик методы
     @Pointcut("@annotation(RfidEvent) && args(rfidLabel,..)")
     public void rfidEvent(Long rfidLabel) {
     }
@@ -33,6 +34,7 @@ public class EventLogger {
     public void logRfidEvent(Long rfidLabel) {
         Event event = new Event();
         event.setRfidLabelValue(rfidLabel);
+        //TODO завести энам с эвент тайпами
         event.setEventType("New rfid created");
         event.setEventTime(LocalDateTime.now());
         event.setEntryDeviceValue(1L);

@@ -3,25 +3,17 @@ spring:
     level:
       ROOT: DEBUG
 
-  config:
-    activate:
-      on-profile: test
-
   datasource:
-    driverClassName: org.hibernate.dialect.PostgreSQL94Dialect
-    url: jdbc:postgresql://localhost:5432/unit_techno?currentSchema=car_entry_control
-      username: postgres
-      password: 1234
-    hikari:
-      connectionTimeout: 30000
-      idleTimeout: 600000
-      maxLifetime: 7190000
-      minimumIdle: 2
-      maximumPoolSize: 50
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:unit_techno\MODE=PostgreSQL;\INIT=CREATE SCHEMA IF NOT EXISTS car_entry_control\;SET SCHEMA car_entry_control;
+    username: car_entry_admin
+    password: squd
 
   liquibase:
     enabled: true
     change-log: classpath:database_changelog.xml
-    user: postgres
-    password: 1234
     drop-first: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true

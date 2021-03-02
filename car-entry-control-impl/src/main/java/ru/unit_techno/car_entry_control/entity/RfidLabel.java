@@ -1,9 +1,12 @@
 package ru.unit_techno.car_entry_control.entity;
 
 import lombok.Data;
+import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +28,8 @@ public class RfidLabel {
     private Long rfidLabelValue;
 
     @Column
-    private String state;
+    @Enumerated(EnumType.STRING)
+    private StateEnum state;
 
     @OneToOne(mappedBy = "rfidLabel")
     private Car car;
