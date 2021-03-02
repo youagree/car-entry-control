@@ -17,7 +17,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-//@Sql(scripts = "init-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @SpringBootTest(classes = CarEntryControlApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public @interface IntegrationTest {
 }

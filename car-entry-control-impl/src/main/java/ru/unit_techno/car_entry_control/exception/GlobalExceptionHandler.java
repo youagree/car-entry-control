@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.unit_techno.car_entry_control.exception.custom.CannotLinkNewRfidLabelToCarException;
 import ru.unit_techno.car_entry_control.exception.custom.CantCreateRfidLabelException;
 import ru.unit_techno.car_entry_control.exception.custom.CarNotFoundException;
 import ru.unit_techno.car_entry_control.exception.custom.RfidAccessDeniedException;
@@ -31,5 +32,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CarNotFoundException.class)
     public void handleEntityNotFoundException(HttpServletRequest request, RuntimeException ex) {
         log.error("entity not found", ex);
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(CannotLinkNewRfidLabelToCarException.class)
+    public void handleCannotLinkNewRfidLabelToCarException(HttpServletRequest request, RuntimeException ex) {
+        log.error("cannot link new rfid label", ex);
     }
 }
