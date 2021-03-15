@@ -21,6 +21,7 @@
 		<springfox-swagger2>2.9.2</springfox-swagger2>
 		<maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
 		<stomp-version>2.3.3</stomp-version>
+		<springfox-swagger2>2.9.2</springfox-swagger2>
 
 		<build.number>1</build.number>
 	</properties>
@@ -47,6 +48,18 @@
 				<groupId>org.mapstruct</groupId>
 				<artifactId>mapstruct</artifactId>
 				<version>${org.mapstruct.version}</version>
+			</dependency>
+
+			<!--swagger-->
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger-ui</artifactId>
+				<version>${springfox-swagger2}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger2</artifactId>
+				<version>${springfox-swagger2}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
