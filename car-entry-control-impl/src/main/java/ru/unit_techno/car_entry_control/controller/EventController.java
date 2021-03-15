@@ -33,8 +33,8 @@ public class EventController {
         eventService.rfidLabelCheck(rfidEntry);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.CONTENT_LENGTH, String.valueOf(rfidEntry.getRfid().toString().length()));
-        headers.set(HttpHeaders.CONTENT_TYPE, "text/plain");
+//        headers.set(HttpHeaders.CONTENT_LENGTH, String.valueOf(rfidEntry.getRfid().toString().length()));
+//        headers.set(HttpHeaders.CONTENT_TYPE, "text/plain");
         return new ResponseEntity<>(rfidEntry.getDeviceId(), headers, HttpStatus.OK);
     }
 
