@@ -11,6 +11,7 @@ import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.utils.BaseTestClass;
 
 import java.util.Optional;
+import java.util.Random;
 
 public class RfidControllerTest extends BaseTestClass {
 
@@ -21,7 +22,7 @@ public class RfidControllerTest extends BaseTestClass {
     public void getFillRfid() {
         RfidLabel rfidLabel = rfidLabelRepository.saveAndFlush(
                 new RfidLabel()
-                        .setRfidLabelValue(124L)
+                        .setRfidLabelValue(new Random().nextLong())
                         .setState(StateEnum.NEW)
         );
 
