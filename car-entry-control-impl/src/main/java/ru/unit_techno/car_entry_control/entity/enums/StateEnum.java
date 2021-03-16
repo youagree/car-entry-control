@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum StateEnum {
     ACTIVE("active"),
     NO_ACTIVE("no_active"),
-    NEW("new");
+    NEW("new"),
+    BLOCK("blocked");
 
     @Getter
     private String value;
