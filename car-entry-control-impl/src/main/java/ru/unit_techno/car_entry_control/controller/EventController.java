@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.unit_techno.car_entry_control.service.EventService;
+import ru.unit_techno.car_entry_control.service.GateService;
 
 @RestController
 @RequestMapping("v1")
@@ -19,6 +20,7 @@ import ru.unit_techno.car_entry_control.service.EventService;
 public class EventController {
 
     private final EventService eventService;
+    private final GateService gateService;
 
     /**
      * takes rfidEntry, returns device_id to open it
@@ -43,4 +45,12 @@ public class EventController {
     public void createRfidLabel(@RequestParam Long rfidLabel) {
         eventService.create(rfidLabel);
     }
+
+    @PostMapping("/forceOpen")
+    @ResponseStatus(HttpStatus.I_AM_A_TEAPOT)
+    public void forceOpenGate() {
+        //todo Добавить метод на принудительное открытие шлагбаума прям через прошивку
+        gateService.forceOpenGate();
+    }
+
 }
