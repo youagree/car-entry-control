@@ -12,6 +12,8 @@ import ru.unit_techno.car_entry_control.exception.custom.CannotLinkNewRfidLabelT
 import ru.unit_techno.car_entry_control.repository.CarRepository;
 import ru.unit_techno.car_entry_control.repository.RfidLabelRepository;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 @RequiredArgsConstructor
 public class RfidService {
@@ -30,5 +32,11 @@ public class RfidService {
         rfidLabelRepository.save(existRfid.setState(StateEnum.ACTIVE)
                 .setCar(existCar));
 
+    }
+
+    public void blockRfidLabel(Long rfidId) {
+        RfidLabel rfidLabel = rfidLabelRepository.findByRfidLabelValue(rfidId).orElseThrow(bind(EntityNotFoundException::new, "This rfidLabel not found"));
+        rfidLabel.setState(StateEnum.BLOCK);
+        rfidLabelRepository.save(rfidLabel);
     }
 }

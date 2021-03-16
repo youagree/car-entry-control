@@ -38,12 +38,12 @@ public class EventService {
 
     @RfidEvent(value = RfidEventType.CREATE_RFID_LABEL)
     public void create(Long rfidLabel) {
-        Optional<RfidLabel> foundedRfidLabel = rfidLabelRepository.findByRfidLabelValue(rfidLabel);
-        if (foundedRfidLabel.isPresent()) {
-            throw new EntityExistsException();
-        }
-        rfidLabelRepository.save(new RfidLabel().setRfidLabelValue(rfidLabel)
-                .setState(StateEnum.NEW));
+        log.info("create new rfid label {}", rfidLabel);
+        RfidLabel foundedRfidLabel = rfidLabelRepository.findByRfidLabelValue(rfidLabel).orElseThrow(EntityExistsException::new);
+        rfidLabelRepository.save(foundedRfidLabel
+                            .setRfidLabelValue(rfidLabel)
+                            .setState(StateEnum.NEW));
+
     }
 
     private void rfidExceptionCheck(Optional<RfidLabel> rfidLabel) throws RfidAccessDeniedException {
