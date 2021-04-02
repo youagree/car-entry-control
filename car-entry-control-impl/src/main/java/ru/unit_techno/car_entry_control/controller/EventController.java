@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
 import ru.unit_techno.car_entry_control.service.EventService;
 import ru.unit_techno.car_entry_control.service.GateService;
 
@@ -35,8 +35,8 @@ public class EventController {
         eventService.rfidLabelCheck(rfidEntry);
 
         HttpHeaders headers = new HttpHeaders();
-//        headers.set(HttpHeaders.CONTENT_LENGTH, String.valueOf(rfidEntry.getRfid().toString().length()));
-//        headers.set(HttpHeaders.CONTENT_TYPE, "text/plain");
+        headers.set(HttpHeaders.CONTENT_LENGTH, String.valueOf(rfidEntry.getRfid().toString().length()));
+        headers.set(HttpHeaders.CONTENT_TYPE, "text/plain");
         return new ResponseEntity<>(rfidEntry.getDeviceId(), headers, HttpStatus.OK);
     }
 
