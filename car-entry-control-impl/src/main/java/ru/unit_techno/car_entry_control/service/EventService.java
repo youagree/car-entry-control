@@ -38,12 +38,14 @@ public class EventService {
 
     @RfidEvent(value = RfidEventType.CREATE_RFID_LABEL)
     public void create(Long rfidLabel) {
-        log.info("create new rfid label {}", rfidLabel);
+        log.info("start create new rfid label {}", rfidLabel);
         Optional<RfidLabel> foundedRfidLabel = rfidLabelRepository.findByRfidLabelValue(rfidLabel);
         if(foundedRfidLabel.isEmpty()) {
-            rfidLabelRepository.save(new RfidLabel()
-                                    .setRfidLabelValue(rfidLabel)
-                                    .setState(StateEnum.NEW));
+            RfidLabel newRfidLabel = new RfidLabel()
+                    .setRfidLabelValue(rfidLabel)
+                    .setState(StateEnum.NEW);
+            rfidLabelRepository.save(newRfidLabel);
+            log.info("successfully create new rfid label, {}, status is NEW, you need to activate this rfid" , newRfidLabel);
             return;
         }
         throw new EntityExistsException("rfid label is already exist");
