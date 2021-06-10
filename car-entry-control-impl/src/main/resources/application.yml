@@ -29,3 +29,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/unit_techno?currentSchema=car_entry_control
     username: car_entry_admin
     password: squd
+
+user-model.mail.host: smtp.yandex.ru
+user-model.mail.username: crime-it-tech-user@yandex.ru
+user-model.mail.password: jrRJnutB0t
+user-model.mail.port: 465
+user-model.mail.protocol: smtps
+user-model.debug: false
