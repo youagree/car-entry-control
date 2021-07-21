@@ -2,7 +2,7 @@
 
 CREATE DATABASE unit_techno;
 
-\c unit_techno
+-- \c unit_techno
 
 CREATE SCHEMA car_entry_control;
 

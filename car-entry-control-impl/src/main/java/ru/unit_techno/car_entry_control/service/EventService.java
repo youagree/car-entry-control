@@ -4,7 +4,9 @@ package ru.unit_techno.car_entry_control.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.unit_techno.car_entry_control.aspect.RfidEvent;
 import ru.unit_techno.car_entry_control.aspect.enums.RfidEventType;
 import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
@@ -25,6 +27,7 @@ public class EventService {
 
     private final WSNotificationService notificationService;
     private final RfidLabelRepository rfidLabelRepository;
+    private final DeviceResource deviceResource;
 
     @RfidEvent(value = RfidEventType.CHECK_RFID)
     public String rfidLabelCheck(RfidEntry rfidLabel) throws Exception {
