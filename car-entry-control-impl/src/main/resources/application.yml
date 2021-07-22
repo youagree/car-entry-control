@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8082
 
 logging:
   level:
@@ -29,6 +29,13 @@ spring:
     url: jdbc:postgresql://localhost:5432/unit_techno?currentSchema=car_entry_control
     username: car_entry_admin
     password: squd
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
 
 user-model.mail.host: smtp.yandex.ru
 user-model.mail.username: crime-it-tech-user@yandex.ru
