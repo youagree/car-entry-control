@@ -7,9 +7,12 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EnableFeignClients(basePackages = "ru.unit.techno.device.registration.api")
+@EnableFeignClients(basePackages =
+		{"ru.unit.techno.device.registration.api",
+		"ru.unit.techno.ariss.barrier.api"})
 @EnableDiscoveryClient
-@EntityScan(basePackages = {"ru.unit_techno.user.model.impl.entity",
+@EntityScan(basePackages =
+		{"ru.unit_techno.user.model.impl.entity",
 		"ru.unit_techno.user.model.impl.entity.enums",
 		"ru.unit_techno.car_entry_control.entity",
 		"ru.unit_techno.car_entry_control.entity.enums"})

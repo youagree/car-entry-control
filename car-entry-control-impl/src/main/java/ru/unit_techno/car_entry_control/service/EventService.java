@@ -6,6 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
+import ru.unit.techno.ariss.barrier.api.BarrierFeignClient;
+import ru.unit.techno.ariss.barrier.api.dto.BarrierRequestDto;
+import ru.unit.techno.ariss.barrier.api.dto.BarrierResponseDto;
 import ru.unit.techno.device.registration.api.DeviceResource;
 import ru.unit.techno.device.registration.api.dto.DeviceRequestDto;
 import ru.unit.techno.device.registration.api.dto.DeviceResponseDto;
@@ -16,6 +19,7 @@ import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.exception.custom.RfidAccessDeniedException;
+import ru.unit_techno.car_entry_control.mapper.EntryDeviceToReqRespMapper;
 import ru.unit_techno.car_entry_control.repository.RfidLabelRepository;
 
 import javax.persistence.EntityExistsException;
@@ -31,6 +35,8 @@ public class EventService {
     private final WSNotificationService notificationService;
     private final RfidLabelRepository rfidLabelRepository;
     private final DeviceResource deviceResource;
+    private final BarrierFeignClient barrierFeignClient;
+    private final EntryDeviceToReqRespMapper reqRespMapper;
 
     @RfidEvent(value = RfidEventType.CHECK_RFID)
     public String rfidLabelCheck(RfidEntry rfidLabel) throws Exception {
@@ -39,7 +45,12 @@ public class EventService {
         Optional<RfidLabel> label = rfidLabelRepository.findByRfidLabelValue(longRfidLabel);
         rfidExceptionCheck(label);
         DeviceResponseDto entryDevice = deviceResource.getGroupDevices(rfidLabel.getDeviceId());
-        System.out.println(entryDevice);
+        log.info("ENTRY DEVICE FROM DEVICE-REGISTRATION-CORE: {}", entryDevice);
+        BarrierRequestDto barrierRequest = reqRespMapper.EntryDeviceToRequest(entryDevice);
+        log.info("SEND REQUEST TO ARISS BARRIER MODULE, REQUEST BODY: {}", barrierRequest);
+        BarrierResponseDto barrierResponse = barrierFeignClient.openBarrier(barrierRequest);
+        //TODO сделать проверку пришедшего статуса!
+        log.info("ARISS BARRIER MODULE RESPONSE: {}", barrierResponse);
         log.info("finish validate rfid, start open entry device");
         //todo собрать эвент и сохранить
         return label.get().getRfidLabelValue().toString();

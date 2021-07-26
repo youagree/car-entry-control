@@ -100,6 +100,11 @@
             <groupId>ru.unit.techno.device.registration.service</groupId>
             <artifactId>device-registration-api</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>ru.unit.techno.ariss.barrier</groupId>
+            <artifactId>ariss-barrier-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
