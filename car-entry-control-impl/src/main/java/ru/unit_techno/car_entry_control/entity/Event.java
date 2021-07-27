@@ -2,7 +2,13 @@ package ru.unit_techno.car_entry_control.entity;
 
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,4 +32,13 @@ public class Event {
 
     @Column(name = "event_type")
     private String eventType;
+
+    @Column(name = "info")
+    private String info;
+
+    @Column(name = "entry_info")
+    private String entryInfo;
+
+    @Column(name = "gos_number")
+    private String gosNumber;
 }

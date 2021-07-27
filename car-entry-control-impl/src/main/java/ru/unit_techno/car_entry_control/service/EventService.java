@@ -3,18 +3,19 @@ package ru.unit_techno.car_entry_control.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.unit.techno.ariss.barrier.api.BarrierFeignClient;
 import ru.unit.techno.ariss.barrier.api.dto.BarrierRequestDto;
 import ru.unit.techno.ariss.barrier.api.dto.BarrierResponseDto;
 import ru.unit.techno.device.registration.api.DeviceResource;
-import ru.unit.techno.device.registration.api.dto.DeviceRequestDto;
 import ru.unit.techno.device.registration.api.dto.DeviceResponseDto;
-import ru.unit.techno.device.registration.api.enums.DeviceType;
 import ru.unit_techno.car_entry_control.aspect.RfidEvent;
 import ru.unit_techno.car_entry_control.aspect.enums.RfidEventType;
+import ru.unit_techno.car_entry_control.config.ActionObject;
+import ru.unit_techno.car_entry_control.config.ActionStatus;
+import ru.unit_techno.car_entry_control.config.LogRfidImpl;
 import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
@@ -24,6 +25,7 @@ import ru.unit_techno.car_entry_control.repository.RfidLabelRepository;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j
@@ -37,7 +39,9 @@ public class EventService {
     private final DeviceResource deviceResource;
     private final BarrierFeignClient barrierFeignClient;
     private final EntryDeviceToReqRespMapper reqRespMapper;
+    private final LogRfidImpl logRfid;
 
+    @Transactional
     @RfidEvent(value = RfidEventType.CHECK_RFID)
     public String rfidLabelCheck(RfidEntry rfidLabel) throws Exception {
         Long longRfidLabel = rfidLabel.getRfid();
@@ -52,6 +56,13 @@ public class EventService {
         //TODO сделать проверку пришедшего статуса!
         log.info("ARISS BARRIER MODULE RESPONSE: {}", barrierResponse);
         log.info("finish validate rfid, start open entry device");
+
+        logRfid.logSuccessAction(new ActionObject()
+                .setActionStatus(ActionStatus.ACTIVE)
+                .setEventTime(LocalDateTime.now())
+                .setDeviceId(rfidLabel.getDeviceId())
+                .setGosNumber(label.get().getCar().getGovernmentNumber()));
+
         //todo собрать эвент и сохранить
         return label.get().getRfidLabelValue().toString();
     }

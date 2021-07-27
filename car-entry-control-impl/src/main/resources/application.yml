@@ -11,7 +11,7 @@ ws:
 
 spring:
   application:
-    name: control-system
+    name: car-entry-control
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL94Dialect
     show-sql: true
@@ -43,3 +43,12 @@ user-model.mail.password: jrRJnutB0t
 user-model.mail.port: 465
 user-model.mail.protocol: smtps
 user-model.debug: false
+
+event:
+  type:
+    1234:
+      info: "административный корпус"
+      entryType: "ВЪЕЗД"
+    4334:
+      info: "задний проход"
+      entryType: "ВЫЕЗД"
