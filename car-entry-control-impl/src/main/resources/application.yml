@@ -46,9 +46,9 @@ user-model.debug: false
 
 event:
   type:
-    1234:
+    2345:
       info: "административный корпус"
-      entryType: "ВЪЕЗД"
+      entryType: IN
     4334:
       info: "задний проход"
-      entryType: "ВЫЕЗД"
+      entryType: OUT

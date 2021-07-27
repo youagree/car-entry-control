@@ -2,11 +2,14 @@
 package ru.unit_techno.car_entry_control.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.unit_techno.car_entry_control.entity.Event;
 import ru.unit_techno.car_entry_control.repository.EventRepository;
 
 import java.util.Map;
 
+@Component
 @RequiredArgsConstructor
 public class LogRfidImpl implements LogAction<ActionObject> {
 
@@ -14,6 +17,7 @@ public class LogRfidImpl implements LogAction<ActionObject> {
     private final EventRepository eventRepository;
 
     @Override
+    @Transactional
     public void logSuccessAction(ActionObject actionObject) {
         Map<Long, MetaObject> type = deviceEventConfig.getType();
         MetaObject metaObject = type.get(actionObject.getDeviceId());
