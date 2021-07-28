@@ -5,7 +5,7 @@ import lombok.Getter;
 
 public enum ActionStatus {
     UNKNOWN("неизвестный"),
-    ACTIVE("активны"),
+    ACTIVE("активный"),
     STOP("остановлен/просрочен");
 
     @Getter

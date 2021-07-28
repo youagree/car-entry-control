@@ -2,6 +2,7 @@ package ru.unit_techno.car_entry_control.service;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import ru.unit_techno.car_entry_control.config.ActionObject;
 import ru.unit_techno.car_entry_control.config.ActionStatus;
 import ru.unit_techno.car_entry_control.config.LogRfidImpl;
 import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
+import ru.unit_techno.car_entry_control.entity.Car;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.exception.custom.RfidAccessDeniedException;
@@ -46,33 +48,39 @@ public class EventService {
     public String rfidLabelCheck(RfidEntry rfidLabel) {
         Long longRfidLabel = rfidLabel.getRfid();
         log.info("rfid id is: {}", longRfidLabel);
+        RfidLabel rfid = new RfidLabel().setCar(new Car().setGovernmentNumber(null)).setRfidLabelValue(longRfidLabel);
         Optional<RfidLabel> label = rfidLabelRepository.findByRfidLabelValue(longRfidLabel);
         try {
-            var rfid = rfidExceptionCheck(label);
+            rfid = rfidExceptionCheck(label);
 
             DeviceResponseDto entryDevice = deviceResource.getGroupDevices(rfidLabel.getDeviceId());
 
-            log.info("ENTRY DEVICE FROM DEVICE-REGISTRATION-CORE: {}", entryDevice);
+            log.debug("ENTRY DEVICE FROM DEVICE-REGISTRATION-CORE: {}", entryDevice);
             BarrierRequestDto barrierRequest = reqRespMapper.entryDeviceToRequest(entryDevice);
 
-            log.info("SEND REQUEST TO ARISS BARRIER MODULE, REQUEST BODY: {}", barrierRequest);
+            log.debug("SEND REQUEST TO ARISS BARRIER MODULE, REQUEST BODY: {}", barrierRequest);
             BarrierResponseDto barrierResponse = barrierFeignClient.openBarrier(barrierRequest);
 
             //TODO сделать проверку пришедшего статуса!
-            log.info("ARISS BARRIER MODULE RESPONSE: {}", barrierResponse);
-            log.info("finish validate rfid, start open entry device");
-            buildActionObjectAndLogAction(rfidLabel, label, ActionStatus.ACTIVE);
+            log.debug("ARISS BARRIER MODULE RESPONSE: {}", barrierResponse);
+            log.debug("finish validate rfid, start open entry device");
+            buildActionObjectAndLogAction(rfidLabel, rfid, ActionStatus.ACTIVE);
 
             return rfid.getRfidLabelValue().toString();
-        } catch (RfidAccessDeniedException | EntityNotFoundException e) {
-            log.error("unknown barrier");
-            buildActionObjectAndLogAction(rfidLabel, label, ActionStatus.UNKNOWN);
+        } catch (EntityNotFoundException e) {
+            log.error("unknown barrier", e);
+            buildActionObjectAndLogAction(rfidLabel, rfid, ActionStatus.UNKNOWN);
+            return "";
+        } catch (RfidAccessDeniedException e) {
+            log.error("unknown barrier", e);
+            buildActionObjectAndLogAction(rfidLabel, rfid, ActionStatus.STOP);
+            return "";
         } catch (Exception e) {
-            log.error("exception when try to open barrier");
+            log.error("exception when try to open barrier", e);
+            buildActionObjectAndLogAction(rfidLabel, rfid, ActionStatus.UNKNOWN);
+            //todo что возвращаем если не вышло
+            return "";
         }
-        buildActionObjectAndLogAction(rfidLabel, label, ActionStatus.STOP);
-        //todo что возвращаем если не вышло
-        return "";
     }
 
     @RfidEvent(value = RfidEventType.CREATE_RFID_LABEL)
@@ -87,10 +95,12 @@ public class EventService {
             log.info("successfully create new rfid label, {}, status is NEW, you need to activate this rfid", newRfidLabel);
             return;
         }
+
         throw new EntityExistsException("rfid label is already exist");
     }
 
-    private RfidLabel rfidExceptionCheck(Optional<RfidLabel> rfidLabel) throws RfidAccessDeniedException {
+    @SneakyThrows
+    private RfidLabel rfidExceptionCheck(Optional<RfidLabel> rfidLabel) {
         if (rfidLabel.isEmpty()) {
             log.info("rfidLabel is empty, not exist");
             throw new EntityNotFoundException("this rfid label is not in the database");
@@ -107,6 +117,7 @@ public class EventService {
 
     private void buildActionObjectAndLogAction(RfidEntry rfidEntry, RfidLabel rfidLabel, ActionStatus actionStatus) {
         logRfid.logSuccessAction(new ActionObject()
+                .setRfidLabelValue(rfidLabel.getRfidLabelValue())
                 .setActionStatus(actionStatus)
                 .setEventTime(LocalDateTime.now())
                 .setDeviceId(rfidEntry.getDeviceId())

@@ -20,6 +20,7 @@ public class LogRfidImpl implements LogAction<ActionObject> {
     @Transactional
     public void logSuccessAction(ActionObject actionObject) {
         Map<Long, MetaObject> type = deviceEventConfig.getType();
+        //TODO при отсутствии метадаты по девайсу засетить фейковую метадату с НЕИЗВЕСТНОЕ УСТРОЙСТВО
         MetaObject metaObject = type.get(actionObject.getDeviceId());
 
 
@@ -28,6 +29,9 @@ public class LogRfidImpl implements LogAction<ActionObject> {
                         .setEventTime(actionObject.getEventTime())
                         .setEventType(metaObject.getEntryType().getValue())
                         .setRfidLabelValue(actionObject.getRfidLabelValue())
+                        .setGosNumber(actionObject.getGosNumber())
+                        .setInfo(metaObject.getInfo())
+                        .setStateOfAction(actionObject.getActionStatus().getValue())
                 //info, gosnumber
         );
     }
@@ -35,5 +39,15 @@ public class LogRfidImpl implements LogAction<ActionObject> {
     @Override
     public void logExceptionObject(ActionObject actionObject) {
 
+        eventRepository.save(new Event()
+                        .setEntryDeviceValue(actionObject.getDeviceId())
+                        .setEventTime(actionObject.getEventTime())
+                        .setEventType(null)
+                        .setRfidLabelValue(actionObject.getRfidLabelValue())
+                        .setGosNumber(actionObject.getGosNumber())
+                        .setInfo(null)
+                        .setStateOfAction(actionObject.getActionStatus().getValue())
+                //info, gosnumber
+        );
     }
 }

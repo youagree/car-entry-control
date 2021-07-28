@@ -87,8 +87,7 @@
             <column name="event_time" type="TIMESTAMP"/>
             <column name="event_type" type="VARCHAR"/>
             <column name="info" type="VARCHAR"/>
-            <column name="entry_info" type="VARCHAR"/>
-            <column name="entry_type" type="VARCHAR"/>
+            <column name="state_of_action" type="VARCHAR"/>
             <column name="gos_number" type="VARCHAR"/>
         </createTable>
     </changeSet>

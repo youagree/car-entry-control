@@ -36,8 +36,8 @@ public class Event {
     @Column(name = "info")
     private String info;
 
-    @Column(name = "entry_info")
-    private String entryInfo;
+    @Column(name = "state_of_action")
+    private String stateOfAction;
 
     @Column(name = "gos_number")
     private String gosNumber;
