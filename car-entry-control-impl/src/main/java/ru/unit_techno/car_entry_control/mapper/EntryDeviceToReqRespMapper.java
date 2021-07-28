@@ -13,5 +13,5 @@ public interface EntryDeviceToReqRespMapper {
             @Mapping(source = "deviceId", target = "barrierId"),
             @Mapping(source = "entryAddress", target = "barrierCoreAddress")
     })
-    BarrierRequestDto EntryDeviceToRequest(DeviceResponseDto responseDto);
+    BarrierRequestDto entryDeviceToRequest(DeviceResponseDto responseDto);
 }

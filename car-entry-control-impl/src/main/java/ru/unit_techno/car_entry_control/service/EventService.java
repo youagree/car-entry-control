@@ -43,46 +43,54 @@ public class EventService {
 
     @Transactional
     @RfidEvent(value = RfidEventType.CHECK_RFID)
-    public String rfidLabelCheck(RfidEntry rfidLabel) throws Exception {
+    public String rfidLabelCheck(RfidEntry rfidLabel) {
         Long longRfidLabel = rfidLabel.getRfid();
         log.info("rfid id is: {}", longRfidLabel);
         Optional<RfidLabel> label = rfidLabelRepository.findByRfidLabelValue(longRfidLabel);
-        rfidExceptionCheck(label);
-        DeviceResponseDto entryDevice = deviceResource.getGroupDevices(rfidLabel.getDeviceId());
-        log.info("ENTRY DEVICE FROM DEVICE-REGISTRATION-CORE: {}", entryDevice);
-        BarrierRequestDto barrierRequest = reqRespMapper.EntryDeviceToRequest(entryDevice);
-        log.info("SEND REQUEST TO ARISS BARRIER MODULE, REQUEST BODY: {}", barrierRequest);
-        BarrierResponseDto barrierResponse = barrierFeignClient.openBarrier(barrierRequest);
-        //TODO сделать проверку пришедшего статуса!
-        log.info("ARISS BARRIER MODULE RESPONSE: {}", barrierResponse);
-        log.info("finish validate rfid, start open entry device");
+        try {
+            var rfid = rfidExceptionCheck(label);
 
-        logRfid.logSuccessAction(new ActionObject()
-                .setActionStatus(ActionStatus.ACTIVE)
-                .setEventTime(LocalDateTime.now())
-                .setDeviceId(rfidLabel.getDeviceId())
-                .setGosNumber(label.get().getCar().getGovernmentNumber()));
+            DeviceResponseDto entryDevice = deviceResource.getGroupDevices(rfidLabel.getDeviceId());
 
-        //todo собрать эвент и сохранить
-        return label.get().getRfidLabelValue().toString();
+            log.info("ENTRY DEVICE FROM DEVICE-REGISTRATION-CORE: {}", entryDevice);
+            BarrierRequestDto barrierRequest = reqRespMapper.entryDeviceToRequest(entryDevice);
+
+            log.info("SEND REQUEST TO ARISS BARRIER MODULE, REQUEST BODY: {}", barrierRequest);
+            BarrierResponseDto barrierResponse = barrierFeignClient.openBarrier(barrierRequest);
+
+            //TODO сделать проверку пришедшего статуса!
+            log.info("ARISS BARRIER MODULE RESPONSE: {}", barrierResponse);
+            log.info("finish validate rfid, start open entry device");
+            buildActionObjectAndLogAction(rfidLabel, label, ActionStatus.ACTIVE);
+
+            return rfid.getRfidLabelValue().toString();
+        } catch (RfidAccessDeniedException | EntityNotFoundException e) {
+            log.error("unknown barrier");
+            buildActionObjectAndLogAction(rfidLabel, label, ActionStatus.UNKNOWN);
+        } catch (Exception e) {
+            log.error("exception when try to open barrier");
+        }
+        buildActionObjectAndLogAction(rfidLabel, label, ActionStatus.STOP);
+        //todo что возвращаем если не вышло
+        return "";
     }
 
     @RfidEvent(value = RfidEventType.CREATE_RFID_LABEL)
     public void create(Long rfidLabel) {
         log.info("start create new rfid label {}", rfidLabel);
         Optional<RfidLabel> foundedRfidLabel = rfidLabelRepository.findByRfidLabelValue(rfidLabel);
-        if(foundedRfidLabel.isEmpty()) {
+        if (foundedRfidLabel.isEmpty()) {
             RfidLabel newRfidLabel = new RfidLabel()
                     .setRfidLabelValue(rfidLabel)
                     .setState(StateEnum.NEW);
             rfidLabelRepository.save(newRfidLabel);
-            log.info("successfully create new rfid label, {}, status is NEW, you need to activate this rfid" , newRfidLabel);
+            log.info("successfully create new rfid label, {}, status is NEW, you need to activate this rfid", newRfidLabel);
             return;
         }
         throw new EntityExistsException("rfid label is already exist");
     }
 
-    private void rfidExceptionCheck(Optional<RfidLabel> rfidLabel) throws RfidAccessDeniedException {
+    private RfidLabel rfidExceptionCheck(Optional<RfidLabel> rfidLabel) throws RfidAccessDeniedException {
         if (rfidLabel.isEmpty()) {
             log.info("rfidLabel is empty, not exist");
             throw new EntityNotFoundException("this rfid label is not in the database");
@@ -94,5 +102,14 @@ public class EventService {
             notificationService.sendNotActive(rfidLabel.get().getRfidLabelValue());
             throw new RfidAccessDeniedException("this rfid label is not active");
         }
+        return rfidLabel.get();
+    }
+
+    private void buildActionObjectAndLogAction(RfidEntry rfidEntry, RfidLabel rfidLabel, ActionStatus actionStatus) {
+        logRfid.logSuccessAction(new ActionObject()
+                .setActionStatus(actionStatus)
+                .setEventTime(LocalDateTime.now())
+                .setDeviceId(rfidEntry.getDeviceId())
+                .setGosNumber(rfidLabel.getCar().getGovernmentNumber()));
     }
 }
