@@ -1,6 +1,7 @@
 package ru.unit_techno.car_entry_control.service;
 
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import ru.unit_techno.car_entry_control.config.ActionStatus;
 import ru.unit_techno.car_entry_control.config.LogRfidImpl;
 import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
 import ru.unit_techno.car_entry_control.entity.Car;
+import ru.unit_techno.car_entry_control.entity.Description;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.exception.custom.RfidAccessDeniedException;
@@ -69,15 +71,22 @@ public class EventService {
             return rfid.getRfidLabelValue().toString();
         } catch (EntityNotFoundException e) {
             log.error("unknown barrier", e);
-            buildActionObjectAndLogAction(rfidLabel, rfid, ActionStatus.UNKNOWN);
+            buildActionObjectAndLogAction(rfidLabel, rfid, ActionStatus.UNKNOWN, true, new Description().setStatusCode("500")
+                                                                                                                .setMessage(e.getMessage()));
             return "";
         } catch (RfidAccessDeniedException e) {
             log.error("unknown barrier", e);
-            buildActionObjectAndLogAction(rfidLabel, rfid, ActionStatus.STOP);
+            buildActionObjectAndLogAction(rfidLabel, rfid, ActionStatus.STOP, true, new Description().setStatusCode("500")
+                                                                                                             .setMessage(e.getMessage()));
+            return "";
+        } catch (FeignException e) {
+            log.error("Service not  available", e);
+            buildActionObjectAndLogAction(rfidLabel, rfid, ActionStatus.ACTIVE, true, new Description().setStatusCode(String.valueOf(e.status()))
+                                                        .setMessage(e.getMessage()).setErroredServiceName(e.request().url()));
             return "";
         } catch (Exception e) {
             log.error("exception when try to open barrier", e);
-            buildActionObjectAndLogAction(rfidLabel, rfid, ActionStatus.UNKNOWN);
+            buildActionObjectAndLogAction(rfidLabel, rfid, ActionStatus.UNKNOWN, true, new Description().setStatusCode("500").setMessage(e.getMessage()));
             //todo что возвращаем если не вышло
             return "";
         }
@@ -122,5 +131,17 @@ public class EventService {
                 .setEventTime(LocalDateTime.now())
                 .setDeviceId(rfidEntry.getDeviceId())
                 .setGosNumber(rfidLabel.getCar().getGovernmentNumber()));
+    }
+
+    private void buildActionObjectAndLogAction(RfidEntry rfidEntry, RfidLabel rfidLabel, ActionStatus actionStatus,
+                                               boolean isErrored, Description description) {
+        logRfid.logSuccessAction(new ActionObject()
+                .setRfidLabelValue(rfidLabel.getRfidLabelValue())
+                .setActionStatus(actionStatus)
+                .setEventTime(LocalDateTime.now())
+                .setDeviceId(rfidEntry.getDeviceId())
+                .setGosNumber(rfidLabel.getCar().getGovernmentNumber())
+                .setIsErrored(isErrored)
+                .setDescription(description));
     }
 }

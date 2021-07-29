@@ -32,6 +32,8 @@ public class LogRfidImpl implements LogAction<ActionObject> {
                         .setGosNumber(actionObject.getGosNumber())
                         .setInfo(metaObject.getInfo())
                         .setStateOfAction(actionObject.getActionStatus().getValue())
+                        .setDescription(actionObject.getDescription())
+                        .setErrored(actionObject.getIsErrored())
                 //info, gosnumber
         );
     }

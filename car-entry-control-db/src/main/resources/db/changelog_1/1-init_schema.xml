@@ -89,6 +89,8 @@
             <column name="info" type="VARCHAR"/>
             <column name="state_of_action" type="VARCHAR"/>
             <column name="gos_number" type="VARCHAR"/>
+            <column name="is_errored" type="BOOLEAN"/>
+            <column name="description" type="JSONB"/>
         </createTable>
     </changeSet>
 

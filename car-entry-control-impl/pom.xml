@@ -105,6 +105,11 @@
             <groupId>ru.unit.techno.ariss.barrier</groupId>
             <artifactId>ariss-barrier-api</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.vladmihalcea</groupId>
+            <artifactId>hibernate-types-52</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

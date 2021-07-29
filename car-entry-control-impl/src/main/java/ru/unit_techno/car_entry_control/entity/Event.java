@@ -1,6 +1,9 @@
 package ru.unit_techno.car_entry_control.entity;
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.Data;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +17,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "events")
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @SequenceGenerator(name = "squd_event_id_seq", sequenceName = "squd_event_id_seq")
 public class Event {
     @Id
@@ -41,4 +45,11 @@ public class Event {
 
     @Column(name = "gos_number")
     private String gosNumber;
+
+    @Column(name = "is_errored")
+    private boolean isErrored;
+
+    @Type(type = "jsonb")
+    @Column(name = "description", columnDefinition = "jsonb")
+    private Description description;
 }

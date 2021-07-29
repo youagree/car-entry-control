@@ -2,6 +2,7 @@
 package ru.unit_techno.car_entry_control.config;
 
 import lombok.Data;
+import ru.unit_techno.car_entry_control.entity.Description;
 
 import java.time.LocalDateTime;
 
@@ -13,4 +14,6 @@ public class ActionObject {
     //todo enum с 3 статусами
     private ActionStatus actionStatus;
     private String gosNumber;
+    private Boolean isErrored = false;
+    private Description description;
 }
