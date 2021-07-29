@@ -8,6 +8,7 @@ import ru.unit_techno.car_entry_control.entity.Event;
 import ru.unit_techno.car_entry_control.repository.EventRepository;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -21,8 +22,11 @@ public class LogRfidImpl implements LogAction<ActionObject> {
     public void logSuccessAction(ActionObject actionObject) {
         Map<Long, MetaObject> type = deviceEventConfig.getType();
         //TODO при отсутствии метадаты по девайсу засетить фейковую метадату с НЕИЗВЕСТНОЕ УСТРОЙСТВО
-        MetaObject metaObject = type.get(actionObject.getDeviceId());
 
+        MetaObject metaObject = Optional.ofNullable(type.get(actionObject.getDeviceId()))
+                .orElse(new MetaObject()
+                        .setEntryType(EntryType.UNKNOWN)
+                        .setInfo(""));
 
         eventRepository.save(new Event()
                         .setEntryDeviceValue(actionObject.getDeviceId())
