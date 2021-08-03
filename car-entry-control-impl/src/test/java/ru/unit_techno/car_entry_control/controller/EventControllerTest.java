@@ -15,6 +15,7 @@ public class EventControllerTest extends BaseTestClass {
     public static final String EVENT = BASE_URL + "event";
 
     @Test
+
     @DisplayName("Положительный кейс, когда метка существует и в статусе ACTIVE, -> шлагбаум открывается")
     public void eventHandlerGoodCase() {
         rfidLabelRepository.saveAndFlush(

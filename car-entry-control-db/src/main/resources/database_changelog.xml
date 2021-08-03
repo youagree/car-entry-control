@@ -5,5 +5,5 @@
 
     <include file="db\changelog_1\changelog-v.1-cumulative.xml" relativeToChangelogFile="true"/>
     <include file="database_changelog_user_model.xml" relativeToChangelogFile="true"/>
-
+    <include file="changelog_action_lib.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

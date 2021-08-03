@@ -21,7 +21,7 @@
         <liquibase.password>squd</liquibase.password>
 
         <!--liquibase plugin version-->
-        <liquibase-plugin.version>3.6.1</liquibase-plugin.version>
+        <liquibase-plugin.version>4.4.2</liquibase-plugin.version>
     </properties>
 
     <dependencies>
@@ -38,6 +38,10 @@
         <dependency>
             <groupId>ru.unit.techno</groupId>
             <artifactId>user-model-infrastructure-db</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ru.unit.techno</groupId>
+            <artifactId>ariss-log-action-db</artifactId>
         </dependency>
     </dependencies>
 
