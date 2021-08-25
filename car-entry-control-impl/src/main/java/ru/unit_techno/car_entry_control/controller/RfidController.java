@@ -4,6 +4,7 @@ package ru.unit_techno.car_entry_control.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.unit_techno.car_entry_control.dto.request.EditRfidLabelRequest;
 import ru.unit_techno.car_entry_control.service.RfidService;
 
 @RestController
@@ -24,5 +25,11 @@ public class RfidController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void blockRfidLabel(@PathVariable Long rfidId) {
         rfidService.blockRfidLabel(rfidId);
+    }
+
+    @PostMapping("/edit")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateRfidLabel(@RequestBody EditRfidLabelRequest editRequest) {
+        rfidService.editRfidLabel(editRequest);
     }
 }

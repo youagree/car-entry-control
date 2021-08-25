@@ -7,4 +7,6 @@ import ru.unit_techno.car_entry_control.entity.Car;
 
 @Repository
 public interface CarRepository extends JpaRepository<Car, Long> {
+
+    Car findCarByGovernmentNumber(String governmentNumber);
 }

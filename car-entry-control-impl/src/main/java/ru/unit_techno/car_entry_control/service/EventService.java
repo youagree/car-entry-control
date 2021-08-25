@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import ru.unit.techno.ariss.barrier.api.BarrierFeignClient;
 import ru.unit.techno.ariss.barrier.api.dto.BarrierRequestDto;
 import ru.unit.techno.ariss.barrier.api.dto.BarrierResponseDto;

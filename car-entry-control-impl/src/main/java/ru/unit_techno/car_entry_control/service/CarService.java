@@ -12,6 +12,8 @@ import ru.unit_techno.car_entry_control.entity.Car;
 import ru.unit_techno.car_entry_control.mapper.CarMapper;
 import ru.unit_techno.car_entry_control.repository.CarRepository;
 
+import javax.persistence.EntityExistsException;
+
 @Service
 @RequiredArgsConstructor
 public class CarService {
@@ -20,7 +22,18 @@ public class CarService {
     private final CarRepository carRepository;
 
     public void create(CarCreateDto carCreateDto) {
+        validateGovernmentNumber(carCreateDto.getGovernmentNumber());
         Car car = carMapper.toDomain(carCreateDto);
         carRepository.save(car);
+    }
+
+    public void validateGovernmentNumber(String governmentNumber) {
+        if (!governmentNumber.matches("^[АВЕКМНОРСТУХ]\\d{3}[АВЕКМНОРСТУХ]{2} \\d{2,3}$")) {
+            throw new IllegalArgumentException("Invalid government number: " + governmentNumber + ". Please try again!");
+        }
+
+        if (carRepository.findCarByGovernmentNumber(governmentNumber) != null) {
+            throw new EntityExistsException("This government number " + governmentNumber + " is already exist! Please try again!");
+        }
     }
 }
