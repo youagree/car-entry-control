@@ -57,6 +57,7 @@
             <column name="rfid_label_value" type="BIGINT">
                 <constraints unique="true" nullable="false"/>
             </column>
+            <column name="no_active_until" type="TIMESTAMP"/>
             <column name="car_id" type="BIGINT"/>
         </createTable>
     </changeSet>

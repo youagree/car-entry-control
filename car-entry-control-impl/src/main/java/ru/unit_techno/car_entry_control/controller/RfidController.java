@@ -2,10 +2,13 @@
 package ru.unit_techno.car_entry_control.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.unit_techno.car_entry_control.dto.request.EditRfidLabelRequest;
 import ru.unit_techno.car_entry_control.service.RfidService;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping("/ui/rfid")
@@ -42,5 +45,12 @@ public class RfidController {
     @DeleteMapping("/deleteRfid/{rfidId}")
     public void deleteNewRfidLabel(@PathVariable Long rfidId) {
         rfidService.deleteNewRfidLabel(rfidId);
+    }
+
+    @PostMapping("/deactivateUntil")
+    @ResponseStatus(HttpStatus.OK)
+    public void deactivateRfid(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date dateUntilDeactivated,
+                               @RequestParam Long rfidLabelId) {
+        rfidService.deactivateUntilSomeDate(dateUntilDeactivated, rfidLabelId);
     }
 }

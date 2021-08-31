@@ -6,7 +6,9 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+@EnableScheduling
 @EnableFeignClients(basePackages =
 		{"ru.unit.techno.device.registration.api",
 		"ru.unit.techno.ariss.barrier.api"})

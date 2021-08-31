@@ -7,6 +7,7 @@ import lombok.Setter;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -27,6 +28,9 @@ public class RfidLabel {
     @Column
     @Enumerated(EnumType.STRING)
     private StateEnum state;
+
+    @Column(name = "no_active_until")
+    private Timestamp noActiveUntil;
 
     @OneToOne
     @JoinColumn(name="car_id")

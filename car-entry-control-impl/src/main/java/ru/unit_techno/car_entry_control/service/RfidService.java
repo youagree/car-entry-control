@@ -15,6 +15,8 @@ import ru.unit_techno.car_entry_control.repository.CarRepository;
 import ru.unit_techno.car_entry_control.repository.RfidLabelRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -83,9 +85,22 @@ public class RfidService {
             rfidLabelRepository.deleteByRfidLabelValue(rfidId);
         } else {
             throw new IllegalStateException("Only labels with the NEW status can be deleted." +
-                                            " State of this rfid label is " + existRfid.getState().getValue());
+                    " State of this rfid label is " + existRfid.getState().getValue());
         }
 
+    }
+
+    @Transactional
+    public void deactivateUntilSomeDate(Date dateUntilDeactivated, Long rfidLabelId) {
+        RfidLabel existRfid = rfidLabelRepository.findByRfidLabelValue(rfidLabelId).orElseThrow(
+                bind(CannotLinkNewRfidLabelToCarException::new, "rfid does not exist")
+        );
+
+        if (existRfid.getState() != StateEnum.NEW || existRfid.getState() != StateEnum.NO_ACTIVE) {
+            rfidLabelRepository.deactivateRfidLabelUntilSomeDate(dateUntilDeactivated, rfidLabelId);
+        } else {
+            throw new IllegalStateException("Cant deactivate NEW or NO_ACTIVE rfid label");
+        }
     }
 
     private void updateRfid(RfidLabel existRfid, EditRfidLabelRequest editRequest) {
