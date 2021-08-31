@@ -25,7 +25,6 @@
             <column name="car_id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="rfid_label_id" type="BIGINT"/>
             <column name="car_on_the_territory" type="BOOLEAN"/>
             <column name="government_number" type="VARCHAR"/>
             <column name="car_model" type="VARCHAR"/>
@@ -58,39 +57,7 @@
             <column name="rfid_label_value" type="BIGINT">
                 <constraints unique="true" nullable="false"/>
             </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="2021-01-17-create-sequence-squd_event_id_seq" author="ESV">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <sequenceExists sequenceName="squd_event_id_seq"/>
-            </not>
-        </preConditions>
-        <createSequence sequenceName="squd_event_id_seq" incrementBy="50"/>
-    </changeSet>
-
-    <changeSet id="2021-01-17-create-table-events" author="ESV">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="events"/>
-            </not>
-        </preConditions>
-
-        <!-- ТАБЛИЦА EVENTS -->
-        <createTable tableName="events">
-            <column name="event_id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="rfid_label_value" type="BIGINT"/>
-            <column name="entry_device_value" type="BIGINT"/>
-            <column name="event_time" type="TIMESTAMP"/>
-            <column name="event_type" type="VARCHAR"/>
-            <column name="info" type="VARCHAR"/>
-            <column name="state_of_action" type="VARCHAR"/>
-            <column name="gos_number" type="VARCHAR"/>
-            <column name="is_errored" type="BOOLEAN"/>
-            <column name="description" type="JSONB"/>
+            <column name="car_id" type="BIGINT"/>
         </createTable>
     </changeSet>
 
@@ -124,20 +91,20 @@
 
     <!-- Foreign keys & indexes -->
     <changeSet author="ESV" id="cars-createIndex">
-        <createIndex indexName="idx_cars_rfid_label_id" tableName="cars">
-            <column name="rfid_label_id"/>
+        <createIndex indexName="idx_rfid_label_id_to_cars" tableName="rfid_labels">
+            <column name="car_id"/>
         </createIndex>
         <comment>cars table create fk index</comment>
     </changeSet>
 
-    <changeSet author="ESV" id="create-foreign-key-cars">
-        <addForeignKeyConstraint baseColumnNames="rfid_label_id"
-                                 baseTableName="cars"
-                                 constraintName="fk_cars_rfid_label_id"
-                                 onDelete="NO ACTION"
-                                 onUpdate="NO ACTION"
-                                 referencedColumnNames="rfid_label_id"
-                                 referencedTableName="rfid_labels"/>
+    <changeSet author="ESV" id="create-foreign-key-rfid-labels">
+        <addForeignKeyConstraint baseColumnNames="car_id"
+                                 baseTableName="rfid_labels"
+                                 constraintName="fk_rfid_label_id_to_cars"
+                                 onDelete="SET NULL"
+                                 onUpdate="CASCADE"
+                                 referencedColumnNames="car_id"
+                                 referencedTableName="cars"/>
     </changeSet>
 
 </databaseChangeLog>

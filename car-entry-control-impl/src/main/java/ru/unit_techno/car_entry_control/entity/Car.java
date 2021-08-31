@@ -1,20 +1,15 @@
 package ru.unit_techno.car_entry_control.entity;
 
-import lombok.Data;
+import lombok.*;
+import org.hibernate.Hibernate;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
 @Table(name = "cars")
 @SequenceGenerator(name = "squd_car_id_seq", sequenceName = "squd_car_id_seq")
 public class Car {
@@ -23,8 +18,7 @@ public class Car {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "squd_car_id_seq")
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="rfid_label_id")
+    @OneToOne(mappedBy = "car")
     private RfidLabel rfidLabel;
 
     @Column(name = "government_number")

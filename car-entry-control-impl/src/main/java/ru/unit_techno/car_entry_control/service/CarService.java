@@ -7,6 +7,7 @@ package ru.unit_techno.car_entry_control.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.unit_techno.car_entry_control.dto.CarCreateDto;
 import ru.unit_techno.car_entry_control.entity.Car;
 import ru.unit_techno.car_entry_control.mapper.CarMapper;
@@ -21,6 +22,7 @@ public class CarService {
     private final CarMapper carMapper;
     private final CarRepository carRepository;
 
+    @Transactional
     public void create(CarCreateDto carCreateDto) {
         validateGovernmentNumber(carCreateDto.getGovernmentNumber());
         Car car = carMapper.toDomain(carCreateDto);
@@ -32,7 +34,7 @@ public class CarService {
             throw new IllegalArgumentException("Invalid government number: " + governmentNumber + ". Please try again!");
         }
 
-        if (carRepository.findCarByGovernmentNumber(governmentNumber) != null) {
+        if (carRepository.findCarByGovernmentNumber(governmentNumber).isPresent()) {
             throw new EntityExistsException("This government number " + governmentNumber + " is already exist! Please try again!");
         }
     }

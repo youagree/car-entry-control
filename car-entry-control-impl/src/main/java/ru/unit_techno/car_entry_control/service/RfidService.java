@@ -25,14 +25,15 @@ public class RfidService {
     private final RfidLabelRepository rfidLabelRepository;
     private final CarService carService;
 
-    public void fillBlankRfidLabel(Long rfidId, Long carId) {
-        Car existCar = carRepository.findById(rfidId).orElseThrow(
+    public void fillBlankRfidLabel(Long rfidId, String carId) {
+        Car existCar = carRepository.findCarByGovernmentNumber(carId).orElseThrow(
                 bind(CannotLinkNewRfidLabelToCarException::new, "car does not exist")
         );
 
-        RfidLabel existRfid = rfidLabelRepository.findById(carId).orElseThrow(
+        RfidLabel existRfid = rfidLabelRepository.findByRfidLabelValue(rfidId).orElseThrow(
                 bind(CannotLinkNewRfidLabelToCarException::new, "rfid does not exist")
         );
+
         rfidLabelRepository.save(existRfid.setState(StateEnum.ACTIVE)
                 .setCar(existCar));
 
@@ -56,6 +57,35 @@ public class RfidService {
         } else {
             throw new IllegalStateException("Cant update rfid label with status " + existRfid.getState().getValue());
         }
+    }
+
+    @Transactional
+    public void resetRfidStatus(Long rfidId) {
+        RfidLabel existRfid = rfidLabelRepository.findByRfidLabelValue(rfidId).orElseThrow(
+                bind(CannotLinkNewRfidLabelToCarException::new, "rfid does not exist")
+        );
+
+        if (existRfid.getState() == StateEnum.ACTIVE || existRfid.getState() == StateEnum.NO_ACTIVE) {
+            rfidLabelRepository.resetRfidLabelStatus(existRfid.getRfidLabelValue());
+            carRepository.delete(existRfid.getCar());
+        } else {
+            throw new IllegalStateException("Cant update rfid label with this state " + existRfid.getState().getValue());
+        }
+    }
+
+    @Transactional
+    public void deleteNewRfidLabel(Long rfidId) {
+        RfidLabel existRfid = rfidLabelRepository.findByRfidLabelValue(rfidId).orElseThrow(
+                bind(CannotLinkNewRfidLabelToCarException::new, "rfid does not exist")
+        );
+
+        if (existRfid.getState() == StateEnum.NEW) {
+            rfidLabelRepository.deleteByRfidLabelValue(rfidId);
+        } else {
+            throw new IllegalStateException("Only labels with the NEW status can be deleted." +
+                                            " State of this rfid label is " + existRfid.getState().getValue());
+        }
+
     }
 
     private void updateRfid(RfidLabel existRfid, EditRfidLabelRequest editRequest) {

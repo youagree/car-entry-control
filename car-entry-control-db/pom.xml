@@ -21,7 +21,7 @@
         <liquibase.password>squd</liquibase.password>
 
         <!--liquibase plugin version-->
-        <liquibase-plugin.version>4.4.2</liquibase-plugin.version>
+        <liquibase-plugin.version>4.4.3</liquibase-plugin.version>
     </properties>
 
     <dependencies>

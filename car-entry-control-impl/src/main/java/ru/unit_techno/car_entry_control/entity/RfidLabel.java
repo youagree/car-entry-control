@@ -1,21 +1,18 @@
 package ru.unit_techno.car_entry_control.entity;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
+@RequiredArgsConstructor
 @Table(name = "rfid_labels")
 @SequenceGenerator(name = "squd_rfid_label_id_seq", sequenceName = "squd_rfid_label_id_seq")
 public class RfidLabel {
@@ -31,6 +28,7 @@ public class RfidLabel {
     @Enumerated(EnumType.STRING)
     private StateEnum state;
 
-    @OneToOne(mappedBy = "rfidLabel")
+    @OneToOne
+    @JoinColumn(name="car_id")
     private Car car;
 }

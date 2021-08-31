@@ -17,8 +17,8 @@ public class RfidController {
     @GetMapping("/getBlankRfid")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void getBlankRfid(@RequestParam Long rfidId,
-                             @RequestParam Long carId) {
-        rfidService.fillBlankRfidLabel(rfidId, carId);
+                             @RequestParam String governmentNumber) {
+        rfidService.fillBlankRfidLabel(rfidId, governmentNumber);
     }
 
     @PostMapping("/blockRfid/{rfidId}")
@@ -31,5 +31,16 @@ public class RfidController {
     @ResponseStatus(HttpStatus.OK)
     public void updateRfidLabel(@RequestBody EditRfidLabelRequest editRequest) {
         rfidService.editRfidLabel(editRequest);
+    }
+
+    @PutMapping("/resetRfid/{rfidId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void resetRfidStatus(@PathVariable Long rfidId) {
+        rfidService.resetRfidStatus(rfidId);
+    }
+
+    @DeleteMapping("/deleteRfid/{rfidId}")
+    public void deleteNewRfidLabel(@PathVariable Long rfidId) {
+        rfidService.deleteNewRfidLabel(rfidId);
     }
 }

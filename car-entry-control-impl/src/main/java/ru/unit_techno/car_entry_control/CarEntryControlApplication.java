@@ -15,9 +15,12 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 		{"ru.unit_techno.user.model.impl.entity",
 		"ru.unit_techno.user.model.impl.entity.enums",
 		"ru.unit_techno.car_entry_control.entity",
-		"ru.unit_techno.car_entry_control.entity.enums"})
+		"ru.unit_techno.car_entry_control.entity.enums",
+		"ru.unit.techno.arris.log.action.lib.entity"})
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = {"ru.unit_techno.user.model.impl.repository", "ru.unit_techno.car_entry_control.repository"})
+@EnableJpaRepositories(basePackages = {"ru.unit_techno.user.model.impl.repository",
+									   "ru.unit_techno.car_entry_control.repository",
+									   "ru.unit.techno.arris.log.action.lib.repository"})
 public class CarEntryControlApplication {
 
 	public static void main(String[] args) {

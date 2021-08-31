@@ -5,16 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.stereotype.Component;
-import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
-import ru.unit_techno.car_entry_control.entity.Event;
-import ru.unit_techno.car_entry_control.repository.EventRepository;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.getMergedAnnotationAttributes;
 
@@ -23,13 +14,6 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.getMerge
 @Slf4j
 @Data
 public class EventLogger {
-
-    private final EventRepository eventRepository;
-
-    @Autowired
-    public EventLogger(EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
-    }
 
     @AfterReturning("execution(public * ru.unit_techno.car_entry_control.service.*.*(..)) && @annotation(RfidEvent)")
     public void logRfidEvent(JoinPoint joinPoint) {
