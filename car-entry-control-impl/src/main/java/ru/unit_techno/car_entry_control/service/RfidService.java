@@ -1,8 +1,6 @@
 
 package ru.unit_techno.car_entry_control.service;
 
-import static ru.unit_techno.car_entry_control.util.Utils.bind;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +13,9 @@ import ru.unit_techno.car_entry_control.repository.CarRepository;
 import ru.unit_techno.car_entry_control.repository.RfidLabelRepository;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Optional;
+
+import static ru.unit_techno.car_entry_control.util.Utils.bind;
 
 @Service
 @RequiredArgsConstructor

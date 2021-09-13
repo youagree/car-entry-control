@@ -12,9 +12,9 @@ import org.springframework.validation.annotation.Validated;
 import ru.unit.techno.ariss.barrier.api.BarrierFeignClient;
 import ru.unit.techno.ariss.barrier.api.dto.BarrierRequestDto;
 import ru.unit.techno.ariss.barrier.api.dto.BarrierResponseDto;
-import ru.unit.techno.arris.log.action.lib.api.LogActionBuilder;
-import ru.unit.techno.arris.log.action.lib.entity.Description;
-import ru.unit.techno.arris.log.action.lib.model.ActionStatus;
+import ru.unit.techno.ariss.log.action.lib.api.LogActionBuilder;
+import ru.unit.techno.ariss.log.action.lib.entity.Description;
+import ru.unit.techno.ariss.log.action.lib.model.ActionStatus;
 import ru.unit.techno.device.registration.api.DeviceResource;
 import ru.unit.techno.device.registration.api.dto.DeviceResponseDto;
 import ru.unit_techno.car_entry_control.aspect.RfidEvent;
@@ -58,6 +58,7 @@ public class EventService {
 
             log.debug("ENTRY DEVICE FROM DEVICE-REGISTRATION-CORE: {}", entryDevice);
             BarrierRequestDto barrierRequest = reqRespMapper.entryDeviceToRequest(entryDevice);
+            barrierRequest.setGovernmentNumber(rfid.getCar().getGovernmentNumber());
 
             log.debug("SEND REQUEST TO ARISS BARRIER MODULE, REQUEST BODY: {}", barrierRequest);
             BarrierResponseDto barrierResponse = barrierFeignClient.openBarrier(barrierRequest);
@@ -81,7 +82,7 @@ public class EventService {
             catchAction(rfidLabel, rfid, ActionStatus.STOP, e);
             return "";
         } catch (FeignException e) {
-            log.error("Service not  available", e);
+            log.error("Service not available", e);
             catchActionWhenFeignException(rfidLabel, rfid, ActionStatus.ACTIVE, e);
             return "";
         } catch (Exception e) {
