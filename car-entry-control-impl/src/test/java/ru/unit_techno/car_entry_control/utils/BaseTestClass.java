@@ -2,20 +2,16 @@
 package ru.unit_techno.car_entry_control.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.test.context.event.annotation.AfterTestClass;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
-import ru.unit.techno.arris.log.action.lib.repository.EventRepository;
+import org.testcontainers.containers.BindMode;
+import org.testcontainers.containers.PostgreSQLContainer;
+import ru.unit.techno.ariss.log.action.lib.repository.EventRepository;
 import ru.unit_techno.car_entry_control.repository.CarRepository;
 import ru.unit_techno.car_entry_control.repository.RfidLabelRepository;
 import ru.unit_techno.car_entry_control.test_utils.IntegrationTest;
 import ru.unit_techno.car_entry_control.test_utils.TestUtils;
-
-import java.util.Objects;
 
 @Slf4j
 @IntegrationTest
@@ -36,15 +32,28 @@ public class BaseTestClass {
     @Autowired
     protected EventRepository eventRepository;
 
-    @BeforeTestClass
-    private void init() {
-        Resource resource = new ClassPathResource("init-test.sql");
-        ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(resource);
-        resourceDatabasePopulator.execute(Objects.requireNonNull(jdbcTemplate.getDataSource()));
-        log.info("Start data uploaded!");
-    }
+    private static final String DB_NAME = "unit_techno";
 
-    @AfterTestClass
+    private static final PostgreSQLContainer postgresDB = new PostgreSQLContainer<>("postgres:latest")
+            .withDatabaseName(DB_NAME)
+            .withUsername("postgres")
+            .withPassword("postgres")
+            .withExposedPorts(5432)
+            .withClasspathResourceMapping("init-test.sql", "/docker-entrypoint-initdb.d/init.sql", BindMode.READ_ONLY);
+
+    static {
+        postgresDB.start();
+    }
+//
+//    @BeforeTestClass
+//    private void init() {
+//        Resource resource = new ClassPathResource("init-test.sql");
+//        ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(resource);
+//        resourceDatabasePopulator.execute(Objects.requireNonNull(jdbcTemplate.getDataSource()));
+//        log.info("Start data uploaded!");
+//    }
+
+    @AfterEach
     private void end() {
         rfidLabelRepository.deleteAll();
         carRepository.deleteAll();

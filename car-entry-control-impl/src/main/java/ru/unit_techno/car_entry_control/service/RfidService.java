@@ -2,18 +2,24 @@
 package ru.unit_techno.car_entry_control.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.unit_techno.car_entry_control.dto.RfidLabelDto;
 import ru.unit_techno.car_entry_control.dto.request.EditRfidLabelRequest;
 import ru.unit_techno.car_entry_control.entity.Car;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.exception.custom.CannotLinkNewRfidLabelToCarException;
+import ru.unit_techno.car_entry_control.mapper.RfidMapper;
 import ru.unit_techno.car_entry_control.repository.CarRepository;
 import ru.unit_techno.car_entry_control.repository.RfidLabelRepository;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import static ru.unit_techno.car_entry_control.util.Utils.bind;
 
@@ -23,6 +29,7 @@ public class RfidService {
 
     private final CarRepository carRepository;
     private final RfidLabelRepository rfidLabelRepository;
+    private final RfidMapper rfidMapper;
     private final CarService carService;
 
     public void fillBlankRfidLabel(Long rfidId, String carId) {
@@ -99,6 +106,13 @@ public class RfidService {
         } else {
             throw new IllegalStateException("Cant deactivate NEW or NO_ACTIVE rfid label");
         }
+    }
+
+    public Page<RfidLabelDto> getAllNewRfidsWithPaging(Pageable pageable, StateEnum state) {
+        Page<RfidLabel> allByState = rfidLabelRepository.findAllByState(state, pageable);
+        return new PageImpl<>(allByState.getContent().stream()
+                .map(rfidMapper::toDto)
+                .collect(Collectors.toList()), pageable, allByState.getTotalElements());
     }
 
     private void updateRfid(RfidLabel existRfid, EditRfidLabelRequest editRequest) {
