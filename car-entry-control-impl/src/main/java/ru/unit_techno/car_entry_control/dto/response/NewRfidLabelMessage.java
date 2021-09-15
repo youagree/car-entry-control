@@ -10,5 +10,5 @@ import lombok.Data;
 public class NewRfidLabelMessage {
 
     private Long rfidLabelValue;
-    private String message = "Активируйте новую метку";
+    private String message;
 }

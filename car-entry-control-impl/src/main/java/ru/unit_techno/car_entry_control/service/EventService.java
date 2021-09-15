@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import ru.unit.techno.ariss.barrier.api.BarrierFeignClient;
 import ru.unit.techno.ariss.barrier.api.dto.BarrierRequestDto;
 import ru.unit.techno.ariss.barrier.api.dto.BarrierResponseDto;
@@ -74,18 +73,22 @@ public class EventService {
             return rfid.getRfidLabelValue().toString();
         } catch (EntityNotFoundException e) {
             log.error("unknown barrier", e);
+            notificationService.sendActiveButSomethingUnavailable(longRfidLabel);
             catchAction(rfidLabel, rfid, ActionStatus.UNKNOWN, e);
             return "";
         } catch (RfidAccessDeniedException e) {
             // TODO: 03.08.2021 написать тест и проверить то заполняется гос номер
+            notificationService.sendActiveButSomethingUnavailable(longRfidLabel);
             log.error("unknown barrier", e);
             catchAction(rfidLabel, rfid, ActionStatus.STOP, e);
             return "";
         } catch (FeignException e) {
+            notificationService.sendActiveButSomethingUnavailable(longRfidLabel);
             log.error("Service not available", e);
             catchActionWhenFeignException(rfidLabel, rfid, ActionStatus.ACTIVE, e);
             return "";
         } catch (Exception e) {
+            notificationService.sendActiveButSomethingUnavailable(longRfidLabel);
             log.error("exception when try to open barrier", e);
             catchAction(rfidLabel, rfid, ActionStatus.UNKNOWN, e);
             return "";

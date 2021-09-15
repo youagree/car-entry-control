@@ -19,6 +19,16 @@ public class WSNotificationService {
         brokerMessagingTemplate.convertAndSend(
                 notActiveTopic,
                 new NewRfidLabelMessage()
+                        .setMessage("Активируйте новую метку")
+                        .setRfidLabelValue(rfidLabelValue)
+        );
+    }
+
+    public void sendActiveButSomethingUnavailable(Long rfidLabelValue) {
+        brokerMessagingTemplate.convertAndSend(
+                notActiveTopic,
+                new NewRfidLabelMessage()
+                        .setMessage("Вспомогательный сервис является недоступным в данный момент")
                         .setRfidLabelValue(rfidLabelValue)
         );
     }
