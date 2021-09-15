@@ -58,7 +58,7 @@ public class RfidController {
         rfidService.deactivateUntilSomeDate(dateUntilDeactivated, rfidLabelId);
     }
 
-    @GetMapping("/allNewRfids")
+    @GetMapping("/allRfidsByState")
     public Page<RfidLabelDto> findAllRfidsWithNew(Pageable pageable, @RequestParam StateEnum state) {
         return rfidService.getAllNewRfidsWithPaging(pageable, state);
     }

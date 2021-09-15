@@ -1,6 +1,3 @@
--- create database
-
--- CREATE DATABASE unit_techno;
 
 CREATE SCHEMA car_entry_control;
 

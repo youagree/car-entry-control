@@ -44,14 +44,6 @@ public class BaseTestClass {
     static {
         postgresDB.start();
     }
-//
-//    @BeforeTestClass
-//    private void init() {
-//        Resource resource = new ClassPathResource("init-test.sql");
-//        ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator(resource);
-//        resourceDatabasePopulator.execute(Objects.requireNonNull(jdbcTemplate.getDataSource()));
-//        log.info("Start data uploaded!");
-//    }
 
     @AfterEach
     private void end() {

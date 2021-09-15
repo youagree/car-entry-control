@@ -24,6 +24,7 @@
 		<maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
 		<stomp-version>2.3.3</stomp-version>
 		<springfox-swagger2>2.9.2</springfox-swagger2>
+		<test.container.version>1.16.0</test.container.version>
 
 		<build.number>1</build.number>
 	</properties>

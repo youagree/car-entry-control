@@ -96,8 +96,8 @@ public class RfidControllerTest extends BaseTestClass {
                 .setCreationDate(Timestamp.valueOf(LocalDateTime.now()))
                 .setState(StateEnum.NEW).setCar(null));
 
-        String urlPage1 = BASE_URL + "/allNewRfids?page=0&size=2&state=NEW";
-        String urlPage2 = BASE_URL + "/allNewRfids?page=1&size=2&state=NEW";
+        String urlPage1 = BASE_URL + "/allRfidsByState?page=0&size=2&state=NEW";
+        String urlPage2 = BASE_URL + "/allRfidsByState?page=1&size=2&state=NEW";
         RestPageImpl<RfidLabelDto> pageOfDto1 = testUtils.invokeGetApi(new ParameterizedTypeReference<RestPageImpl<RfidLabelDto>>() {
         }, urlPage1, HttpStatus.OK);
         RestPageImpl<RfidLabelDto> pageOfDto2 = testUtils.invokeGetApi(new ParameterizedTypeReference<RestPageImpl<RfidLabelDto>>() {
