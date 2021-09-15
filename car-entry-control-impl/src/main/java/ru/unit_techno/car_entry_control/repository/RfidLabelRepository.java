@@ -1,5 +1,7 @@
 package ru.unit_techno.car_entry_control.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -30,4 +32,6 @@ public interface RfidLabelRepository extends JpaRepository<RfidLabel, Long> {
     @Modifying
     @Query("update RfidLabel set state = 'ACTIVE', noActiveUntil = NULL where noActiveUntil < current_timestamp")
     void activateDeactivatedRfids();
+
+    Page<RfidLabel> findAllByState (StateEnum state, Pageable sort);
 }

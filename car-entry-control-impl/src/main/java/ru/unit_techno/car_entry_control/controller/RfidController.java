@@ -2,10 +2,14 @@
 package ru.unit_techno.car_entry_control.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.unit_techno.car_entry_control.dto.RfidLabelDto;
 import ru.unit_techno.car_entry_control.dto.request.EditRfidLabelRequest;
+import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.service.RfidService;
 
 import java.util.Date;
@@ -52,5 +56,10 @@ public class RfidController {
     public void deactivateRfid(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date dateUntilDeactivated,
                                @RequestParam Long rfidLabelId) {
         rfidService.deactivateUntilSomeDate(dateUntilDeactivated, rfidLabelId);
+    }
+
+    @GetMapping("/allRfidsByState")
+    public Page<RfidLabelDto> findAllRfidsWithNew(Pageable pageable, @RequestParam StateEnum state) {
+        return rfidService.getAllNewRfidsWithPaging(pageable, state);
     }
 }

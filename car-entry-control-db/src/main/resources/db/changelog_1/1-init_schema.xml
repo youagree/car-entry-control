@@ -59,6 +59,7 @@
             </column>
             <column name="no_active_until" type="TIMESTAMP"/>
             <column name="car_id" type="BIGINT"/>
+            <column name="creation_date" type="TIMESTAMP"/>
         </createTable>
     </changeSet>
 

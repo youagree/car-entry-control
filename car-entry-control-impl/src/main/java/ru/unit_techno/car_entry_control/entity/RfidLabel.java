@@ -35,4 +35,7 @@ public class RfidLabel {
     @OneToOne
     @JoinColumn(name="car_id")
     private Car car;
+
+    @Column(name = "creation_date")
+    private Timestamp creationDate;
 }

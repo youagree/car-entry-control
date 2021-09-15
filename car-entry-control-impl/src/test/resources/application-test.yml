@@ -3,17 +3,10 @@ spring:
     level:
       ROOT: DEBUG
 
-  datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:unit_techno\MODE=PostgreSQL;\INIT=CREATE SCHEMA IF NOT EXISTS car_entry_control\;SET SCHEMA car_entry_control;
-    username: car_entry_admin
-    password: squd
-
   liquibase:
     enabled: true
+    parameters:
+      schema: car_entry_control
+      text_array_type: ARRAY
     change-log: classpath:database_changelog.xml
     drop-first: true
-
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    show-sql: true
