@@ -47,6 +47,7 @@ public class RfidController {
     }
 
     @DeleteMapping("/deleteRfid/{rfidId}")
+    @ResponseStatus(HttpStatus.OK)
     public void deleteNewRfidLabel(@PathVariable Long rfidId) {
         rfidService.deleteNewRfidLabel(rfidId);
     }
