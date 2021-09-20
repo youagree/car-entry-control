@@ -12,8 +12,10 @@ import ru.unit.techno.ariss.barrier.api.BarrierFeignClient;
 import ru.unit.techno.ariss.barrier.api.dto.BarrierRequestDto;
 import ru.unit.techno.ariss.barrier.api.dto.BarrierResponseDto;
 import ru.unit.techno.ariss.log.action.lib.api.LogActionBuilder;
+import ru.unit.techno.ariss.log.action.lib.config.DeviceEventConfig;
 import ru.unit.techno.ariss.log.action.lib.entity.Description;
 import ru.unit.techno.ariss.log.action.lib.model.ActionStatus;
+import ru.unit.techno.ariss.log.action.lib.model.MetaObject;
 import ru.unit.techno.device.registration.api.DeviceResource;
 import ru.unit.techno.device.registration.api.dto.DeviceResponseDto;
 import ru.unit_techno.car_entry_control.aspect.RfidEvent;
@@ -42,10 +44,12 @@ public class EventService {
     private final BarrierFeignClient barrierFeignClient;
     private final EntryDeviceToReqRespMapper reqRespMapper;
     private final LogActionBuilder logActionBuilder;
+    private final DeviceEventConfig eventConfig;
 
     @Transactional
     @RfidEvent(value = RfidEventType.CHECK_RFID)
     public String rfidLabelCheck(RfidEntry rfidLabel) {
+        Long barrierId = 0L;
         Long longRfidLabel = rfidLabel.getRfid();
         log.info("rfid id is: {}", longRfidLabel);
         RfidLabel rfid = new RfidLabel().setCar(new Car().setGovernmentNumber(null)).setRfidLabelValue(longRfidLabel);
@@ -57,6 +61,7 @@ public class EventService {
 
             log.debug("ENTRY DEVICE FROM DEVICE-REGISTRATION-CORE: {}", entryDevice);
             BarrierRequestDto barrierRequest = reqRespMapper.entryDeviceToRequest(entryDevice);
+            barrierId = barrierRequest.getBarrierId();
             barrierRequest.setGovernmentNumber(rfid.getCar().getGovernmentNumber());
 
             log.debug("SEND REQUEST TO ARISS BARRIER MODULE, REQUEST BODY: {}", barrierRequest);
@@ -73,22 +78,26 @@ public class EventService {
             return rfid.getRfidLabelValue().toString();
         } catch (EntityNotFoundException e) {
             log.error("unknown barrier", e);
-            notificationService.sendActiveButSomethingUnavailable(longRfidLabel);
+            MetaObject metaObject = eventConfig.getType().get(barrierId);
+            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo());
             catchAction(rfidLabel, rfid, ActionStatus.UNKNOWN, e);
             return "";
         } catch (RfidAccessDeniedException e) {
             // TODO: 03.08.2021 написать тест и проверить то заполняется гос номер
-            notificationService.sendActiveButSomethingUnavailable(longRfidLabel);
+            MetaObject metaObject = eventConfig.getType().get(barrierId);
+            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo());
             log.error("unknown barrier", e);
             catchAction(rfidLabel, rfid, ActionStatus.STOP, e);
             return "";
         } catch (FeignException e) {
-            notificationService.sendActiveButSomethingUnavailable(longRfidLabel);
+            MetaObject metaObject = eventConfig.getType().get(barrierId);
+            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo());
             log.error("Service not available", e);
             catchActionWhenFeignException(rfidLabel, rfid, ActionStatus.ACTIVE, e);
             return "";
         } catch (Exception e) {
-            notificationService.sendActiveButSomethingUnavailable(longRfidLabel);
+            MetaObject metaObject = eventConfig.getType().get(barrierId);
+            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo());
             log.error("exception when try to open barrier", e);
             catchAction(rfidLabel, rfid, ActionStatus.UNKNOWN, e);
             return "";

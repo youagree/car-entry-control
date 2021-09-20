@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import ru.unit_techno.car_entry_control.dto.response.BarrierUnavailable;
 import ru.unit_techno.car_entry_control.dto.response.NewRfidLabelMessage;
 
 @Service
@@ -24,12 +25,12 @@ public class WSNotificationService {
         );
     }
 
-    public void sendActiveButSomethingUnavailable(Long rfidLabelValue) {
+    public void sendActiveButSomethingUnavailable(String rfidLabelValue) {
         brokerMessagingTemplate.convertAndSend(
                 notActiveTopic,
-                new NewRfidLabelMessage()
-                        .setMessage("Вспомогательный сервис является недоступным в данный момент")
-                        .setRfidLabelValue(rfidLabelValue)
+                new BarrierUnavailable()
+                        .setBarrierName("Вспомогательный сервис является недоступным в данный момент")
+                        .setNotificationMessage(rfidLabelValue)
         );
     }
 }
