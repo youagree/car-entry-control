@@ -28,12 +28,6 @@ public class RfidController {
         rfidService.fillBlankRfidLabel(rfidId, governmentNumber);
     }
 
-    @PostMapping("/blockRfid/{rfidId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void blockRfidLabel(@PathVariable Long rfidId) {
-        rfidService.blockRfidLabel(rfidId);
-    }
-
     @PostMapping("/edit")
     @ResponseStatus(HttpStatus.OK)
     public void updateRfidLabel(@RequestBody EditRfidLabelRequest editRequest) {
