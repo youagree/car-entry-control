@@ -39,4 +39,10 @@ public class GlobalExceptionHandler {
     public void handleCannotLinkNewRfidLabelToCarException(HttpServletRequest request, RuntimeException ex) {
         log.error("cannot link new rfid label", ex);
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public void handleIllegalArgumentException(HttpServletRequest request, RuntimeException ex) {
+        log.error(ex.getMessage(), ex);
+    }
 }

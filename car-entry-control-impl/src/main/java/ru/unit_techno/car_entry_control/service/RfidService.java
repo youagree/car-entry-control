@@ -1,26 +1,29 @@
 
 package ru.unit_techno.car_entry_control.service;
 
+import static ru.unit_techno.car_entry_control.util.Utils.bind;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.unit_techno.car_entry_control.dto.CarCreateDto;
 import ru.unit_techno.car_entry_control.dto.RfidLabelDto;
 import ru.unit_techno.car_entry_control.dto.request.EditRfidLabelRequest;
 import ru.unit_techno.car_entry_control.entity.Car;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.exception.custom.CannotLinkNewRfidLabelToCarException;
+import ru.unit_techno.car_entry_control.mapper.CarMapper;
 import ru.unit_techno.car_entry_control.mapper.RfidMapper;
 import ru.unit_techno.car_entry_control.repository.CarRepository;
 import ru.unit_techno.car_entry_control.repository.RfidLabelRepository;
 
+import javax.persistence.EntityExistsException;
 import java.util.Date;
 import java.util.stream.Collectors;
-
-import static ru.unit_techno.car_entry_control.util.Utils.bind;
 
 @Service
 @RequiredArgsConstructor
@@ -29,20 +32,19 @@ public class RfidService {
     private final CarRepository carRepository;
     private final RfidLabelRepository rfidLabelRepository;
     private final RfidMapper rfidMapper;
-    private final CarService carService;
+    private final CarMapper carMapper;
 
-    public void fillBlankRfidLabel(Long rfidId, String carId) {
-        Car existCar = carRepository.findCarByGovernmentNumber(carId).orElseThrow(
-                bind(CannotLinkNewRfidLabelToCarException::new, "car does not exist")
-        );
+    public void createCardAndLinkRfid(Long rfidId, CarCreateDto carCreateDto) {
+        validateGovernmentNumber(carCreateDto.getGovernmentNumber());
+        Car car = carMapper.toDomain(carCreateDto);
+        Car savedCar = carRepository.save(car);
 
         RfidLabel existRfid = rfidLabelRepository.findByRfidLabelValue(rfidId).orElseThrow(
                 bind(CannotLinkNewRfidLabelToCarException::new, "rfid does not exist")
         );
 
         rfidLabelRepository.save(existRfid.setState(StateEnum.ACTIVE)
-                .setCar(existCar));
-
+                .setCar(savedCar));
     }
 
     @Transactional
@@ -110,7 +112,7 @@ public class RfidService {
 
     private void updateRfid(RfidLabel existRfid, EditRfidLabelRequest editRequest) {
         if (!editRequest.getGovernmentNumber().isEmpty()) {
-            carService.validateGovernmentNumber(editRequest.getGovernmentNumber());
+            validateGovernmentNumber(editRequest.getGovernmentNumber());
             existRfid.getCar().setGovernmentNumber(editRequest.getGovernmentNumber());
         }
         if (!editRequest.getCarColor().isEmpty()) {
@@ -119,8 +121,15 @@ public class RfidService {
         if (!editRequest.getCarModel().isEmpty()) {
             existRfid.getCar().setCarModel(editRequest.getCarModel());
         }
-        if (editRequest.getNewRfidValue() != null) {
-            existRfid.setRfidLabelValue(editRequest.getNewRfidValue());
+    }
+
+    public void validateGovernmentNumber(String governmentNumber) {
+        if (!governmentNumber.matches("^[АВЕКМНОРСТУХ]\\d{3}[АВЕКМНОРСТУХ]{2} \\d{2,3}$")) {
+            throw new IllegalArgumentException("Invalid government number: " + governmentNumber + ". Please try again!");
+        }
+
+        if (carRepository.findCarByGovernmentNumber(governmentNumber).isPresent()) {
+            throw new EntityExistsException("This government number " + governmentNumber + " is already exist! Please try again!");
         }
     }
 }

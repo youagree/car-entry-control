@@ -19,6 +19,4 @@ public class EditRfidLabelRequest {
     private String carModel;
     @JsonProperty("car_color")
     private String carColor;
-    @JsonProperty("new_rfid_value")
-    private Long newRfidValue;
 }
