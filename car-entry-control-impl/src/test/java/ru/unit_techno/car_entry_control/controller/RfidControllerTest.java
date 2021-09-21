@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
+import ru.unit_techno.car_entry_control.dto.CarCreateDto;
 import ru.unit_techno.car_entry_control.dto.RfidLabelDto;
 import ru.unit_techno.car_entry_control.entity.Car;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
@@ -34,7 +35,7 @@ public class RfidControllerTest extends BaseTestClass {
 
         Car car = carRepository.saveAndFlush(
                 new Car()
-                .setCarColour("RED")
+                        .setCarColour("RED")
         );
 
         //привязываем неактивный рфид к машине и переводим в статус active
@@ -108,5 +109,68 @@ public class RfidControllerTest extends BaseTestClass {
         Assertions.assertEquals(rfid2.getRfidLabelValue(), page1.get(1).getRfidLabelValue());
         List<RfidLabelDto> page2 = pageOfDto2.getContent();
         Assertions.assertEquals(rfid3.getRfidLabelValue(), page2.get(0).getRfidLabelValue());
+    }
+
+    @Test
+    @DisplayName("Создание машины и прикрепление этой машины к определенной метке")
+    public void createCarWithBlankRfidTest() {
+        Long rfidLabel = 99999L;
+        String url = BASE_URL + "/createCarAndLinkRfid?rfidId=99999";
+
+        rfidLabelRepository.save(new RfidLabel()
+                .setRfidLabelValue(rfidLabel)
+                .setState(StateEnum.NEW));
+
+        CarCreateDto carCreateDto = new CarCreateDto()
+                .setCarModel("BMW")
+                .setCarColour("WHITE")
+                .setGovernmentNumber("А888КК 77");
+
+        testUtils.invokePostApi(Void.class, url, HttpStatus.CREATED, carCreateDto);
+
+        Optional<RfidLabel> byRfidLabelValue = rfidLabelRepository.findByRfidLabelValue(rfidLabel);
+        RfidLabel label = byRfidLabelValue.get();
+
+        Assertions.assertEquals(label.getState(), StateEnum.ACTIVE);
+        Assertions.assertEquals(label.getCar().getGovernmentNumber(), "А888КК 77");
+    }
+
+    @Test
+    @DisplayName("Создание машины и прикрепление этой машины к метке, которой не существует")
+    public void createCarAndLinkWrongRfid() {
+        Long rfidLabel = 99999L;
+        //Урл с несуществующей меткой
+        String url = BASE_URL + "/createCarAndLinkRfid?rfidId=88888";
+
+        rfidLabelRepository.save(new RfidLabel()
+                .setRfidLabelValue(rfidLabel)
+                .setState(StateEnum.NEW));
+
+        CarCreateDto carCreateDto = new CarCreateDto()
+                .setCarModel("BMW")
+                .setCarColour("WHITE")
+                .setGovernmentNumber("А888КК 77");
+
+        testUtils.invokePostApi(Void.class, url, HttpStatus.CONFLICT, carCreateDto);
+    }
+
+    @Test
+    @DisplayName("Создание машины с неправильный гос номером и прикрепление этой машины к метке")
+    public void createCarWithWrongGovernmentNumberAndLinkRfid() {
+        Long rfidLabel = 99999L;
+        //Урл с несуществующей меткой
+        String url = BASE_URL + "/createCarAndLinkRfid?rfidId=99999";
+
+        rfidLabelRepository.save(new RfidLabel()
+                .setRfidLabelValue(rfidLabel)
+                .setState(StateEnum.NEW));
+
+        CarCreateDto carCreateDto = new CarCreateDto()
+                .setCarModel("BMW")
+                .setCarColour("WHITE")
+                //попытка привязать к машине с неверным номером
+                .setGovernmentNumber("З123БС 99");
+
+        testUtils.invokePostApi(Void.class, url, HttpStatus.BAD_REQUEST, carCreateDto);
     }
 }

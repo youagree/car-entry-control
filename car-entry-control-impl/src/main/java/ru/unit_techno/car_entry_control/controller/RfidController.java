@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.unit_techno.car_entry_control.dto.CarCreateDto;
 import ru.unit_techno.car_entry_control.dto.RfidLabelDto;
 import ru.unit_techno.car_entry_control.dto.request.EditRfidLabelRequest;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
@@ -21,11 +22,11 @@ public class RfidController {
 
     private final RfidService rfidService;
 
-    @GetMapping("/getBlankRfid")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void getBlankRfid(@RequestParam Long rfidId,
-                             @RequestParam String governmentNumber) {
-        rfidService.fillBlankRfidLabel(rfidId, governmentNumber);
+    @PostMapping("/createCarAndLinkRfid")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createCarWithBlankRfid(@RequestParam Long rfidId,
+                                       @RequestBody CarCreateDto carCreateDto) {
+        rfidService.createCardAndLinkRfid(rfidId, carCreateDto);
     }
 
     @PostMapping("/edit")
