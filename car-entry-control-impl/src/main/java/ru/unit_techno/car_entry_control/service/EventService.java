@@ -18,6 +18,7 @@ import ru.unit.techno.ariss.log.action.lib.model.ActionStatus;
 import ru.unit.techno.ariss.log.action.lib.model.MetaObject;
 import ru.unit.techno.device.registration.api.DeviceResource;
 import ru.unit.techno.device.registration.api.dto.DeviceResponseDto;
+import ru.unit.techno.device.registration.api.enums.DeviceType;
 import ru.unit_techno.car_entry_control.aspect.RfidEvent;
 import ru.unit_techno.car_entry_control.aspect.enums.RfidEventType;
 import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
@@ -57,7 +58,7 @@ public class EventService {
         try {
             rfid = rfidExceptionCheck(label);
 
-            DeviceResponseDto entryDevice = deviceResource.getGroupDevices(rfidLabel.getDeviceId());
+            DeviceResponseDto entryDevice = deviceResource.getGroupDevices(rfidLabel.getDeviceId(), DeviceType.RFID);
 
             log.debug("ENTRY DEVICE FROM DEVICE-REGISTRATION-CORE: {}", entryDevice);
             BarrierRequestDto barrierRequest = reqRespMapper.entryDeviceToRequest(entryDevice);
@@ -105,6 +106,7 @@ public class EventService {
     }
 
     @RfidEvent(value = RfidEventType.CREATE_RFID_LABEL)
+    @Transactional
     public void create(Long rfidLabel) {
         log.info("start create new rfid label {}", rfidLabel);
         Optional<RfidLabel> foundedRfidLabel = rfidLabelRepository.findByRfidLabelValue(rfidLabel);
@@ -134,6 +136,7 @@ public class EventService {
             notificationService.sendNotActive(rfidLabel.get().getRfidLabelValue());
             throw new RfidAccessDeniedException("this rfid label is not active");
         }
+
         return rfidLabel.get();
     }
 

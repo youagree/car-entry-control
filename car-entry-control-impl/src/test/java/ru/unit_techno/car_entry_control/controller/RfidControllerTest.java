@@ -18,7 +18,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 public class RfidControllerTest extends BaseTestClass {
 
@@ -27,20 +26,23 @@ public class RfidControllerTest extends BaseTestClass {
     @Test
     @DisplayName("привязка машины к новой rfid метке")
     public void getFillRfid() {
-        RfidLabel rfidLabel = rfidLabelRepository.saveAndFlush(
-                new RfidLabel()
-                        .setRfidLabelValue(new Random().nextLong())
-                        .setState(StateEnum.NEW)
-        );
-
         Car car = carRepository.saveAndFlush(
                 new Car()
                         .setCarColour("RED")
+                        .setGovernmentNumber("А777АА 77")
+        );
+
+
+        RfidLabel rfidLabel = rfidLabelRepository.saveAndFlush(
+                new RfidLabel()
+                        .setRfidLabelValue(1234511L)
+                        .setState(StateEnum.NEW)
+                        .setCar(car)
         );
 
         //привязываем неактивный рфид к машине и переводим в статус active
-        String url = BASE_URL + "/getBlankRfid?rfidId=" + rfidLabel.getId() + "&" +
-                "carId=" + car.getId();
+        String url = BASE_URL + "/getBlankRfid?rfidId=" + rfidLabel.getRfidLabelValue() + "&" +
+                "governmentNumber=" + "А777АА 77";
         testUtils.invokeGetApi(Void.class, url, HttpStatus.NO_CONTENT, null);
 
         Optional<RfidLabel> byId = rfidLabelRepository.findById(rfidLabel.getId());
@@ -51,14 +53,21 @@ public class RfidControllerTest extends BaseTestClass {
     @Test
     @DisplayName("при привязке к рфид, машина не была найдена")
     public void getFillRfidBadCarId() {
+        Car car = carRepository.saveAndFlush(
+                new Car()
+                        .setCarColour("RED")
+                        .setGovernmentNumber("Т888ТТ 77")
+        );
+
         RfidLabel rfidLabel = rfidLabelRepository.saveAndFlush(
                 new RfidLabel()
                         .setRfidLabelValue(125L)
                         .setState(StateEnum.NEW)
         );
-        //привязываем неактивный рфид к машине и переводим в статус active
-        String url = BASE_URL + "/getBlankRfid?rfidId=" + rfidLabel.getId() + "&" +
-                "carId=" + 30;
+
+
+        String url = BASE_URL + "/getBlankRfid?rfidId=" + rfidLabel.getRfidLabelValue() + "&" +
+                "governmentNumber=" + "А777АА 88";
         testUtils.invokeGetApi(Void.class, url, HttpStatus.CONFLICT, null);
 
         Optional<RfidLabel> byId = rfidLabelRepository.findById(rfidLabel.getId());
@@ -71,11 +80,11 @@ public class RfidControllerTest extends BaseTestClass {
     public void getFillRfidBadRfidId() {
         Car car = carRepository.saveAndFlush(new Car()
                 .setCarColour("RED")
+                .setGovernmentNumber("А999АА 777")
         );
 
-        //привязываем неактивный рфид к машине и переводим в статус active
         String url = BASE_URL + "/getBlankRfid?rfidId=" + 302 + "&" +
-                "carId=" + car.getId();
+                "governmentNumber=" + car.getGovernmentNumber();
         testUtils.invokeGetApi(Void.class, url, HttpStatus.CONFLICT, null);
     }
 

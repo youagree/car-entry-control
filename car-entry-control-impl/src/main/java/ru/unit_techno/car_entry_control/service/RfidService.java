@@ -34,6 +34,7 @@ public class RfidService {
     private final RfidMapper rfidMapper;
     private final CarMapper carMapper;
 
+    @Transactional
     public void createCardAndLinkRfid(Long rfidId, CarCreateDto carCreateDto) {
         validateGovernmentNumber(carCreateDto.getGovernmentNumber());
         Car car = carMapper.toDomain(carCreateDto);

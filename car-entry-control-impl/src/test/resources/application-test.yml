@@ -10,3 +10,16 @@ spring:
       text_array_type: ARRAY
     change-log: classpath:database_changelog.xml
     drop-first: true
+
+event:
+  type:
+    7765:
+      info: "административный корпус"
+      entryType: OUT
+    2345:
+      info: "задний проход"
+      entryType: IN
+
+eureka:
+  client:
+    enabled: false

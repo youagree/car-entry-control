@@ -46,7 +46,7 @@ user-model.debug: false
 
 event:
   type:
-    4334:
+    1239:
       info: "административный корпус"
       entryType: OUT
     2345:
