@@ -8,7 +8,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import ru.unit_techno.car_entry_control.dto.CarCreateDto;
 import ru.unit_techno.car_entry_control.dto.RfidLabelDto;
-import ru.unit_techno.car_entry_control.entity.Car;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.utils.BaseTestClass;
@@ -24,26 +23,22 @@ public class RfidControllerTest extends BaseTestClass {
     public static final String BASE_URL = "/ui/rfid";
 
     @Test
-    @DisplayName("привязка машины к новой rfid метке")
+    @DisplayName("Создание новой машины и привязывание её к существующей метке")
     public void getFillRfid() {
-        Car car = carRepository.saveAndFlush(
-                new Car()
-                        .setCarColour("RED")
-                        .setGovernmentNumber("А777АА 77")
-        );
-
+        CarCreateDto carCreateDto = new CarCreateDto()
+                .setCarColour("RED")
+                .setGovernmentNumber("Т888ТТ 77")
+                .setCarModel("LADA");
 
         RfidLabel rfidLabel = rfidLabelRepository.saveAndFlush(
                 new RfidLabel()
                         .setRfidLabelValue(1234511L)
                         .setState(StateEnum.NEW)
-                        .setCar(car)
         );
 
         //привязываем неактивный рфид к машине и переводим в статус active
-        String url = BASE_URL + "/getBlankRfid?rfidId=" + rfidLabel.getRfidLabelValue() + "&" +
-                "governmentNumber=" + "А777АА 77";
-        testUtils.invokeGetApi(Void.class, url, HttpStatus.NO_CONTENT, null);
+        String url = BASE_URL + "/createCarAndLinkRfid?rfidId=" + rfidLabel.getRfidLabelValue();
+        testUtils.invokePostApi(Void.class, url, HttpStatus.CREATED, carCreateDto);
 
         Optional<RfidLabel> byId = rfidLabelRepository.findById(rfidLabel.getId());
 
@@ -51,41 +46,15 @@ public class RfidControllerTest extends BaseTestClass {
     }
 
     @Test
-    @DisplayName("при привязке к рфид, машина не была найдена")
-    public void getFillRfidBadCarId() {
-        Car car = carRepository.saveAndFlush(
-                new Car()
-                        .setCarColour("RED")
-                        .setGovernmentNumber("Т888ТТ 77")
-        );
-
-        RfidLabel rfidLabel = rfidLabelRepository.saveAndFlush(
-                new RfidLabel()
-                        .setRfidLabelValue(125L)
-                        .setState(StateEnum.NEW)
-        );
-
-
-        String url = BASE_URL + "/getBlankRfid?rfidId=" + rfidLabel.getRfidLabelValue() + "&" +
-                "governmentNumber=" + "А777АА 88";
-        testUtils.invokeGetApi(Void.class, url, HttpStatus.CONFLICT, null);
-
-        Optional<RfidLabel> byId = rfidLabelRepository.findById(rfidLabel.getId());
-
-        Assertions.assertEquals(byId.get().getState(), StateEnum.NEW);
-    }
-
-    @Test
     @DisplayName("при привязке к рфид, рфид не был найден")
     public void getFillRfidBadRfidId() {
-        Car car = carRepository.saveAndFlush(new Car()
+        CarCreateDto carCreateDto = new CarCreateDto()
                 .setCarColour("RED")
-                .setGovernmentNumber("А999АА 777")
-        );
+                .setGovernmentNumber("Т888ТТ 77")
+                .setCarModel("LADA");
 
-        String url = BASE_URL + "/getBlankRfid?rfidId=" + 302 + "&" +
-                "governmentNumber=" + car.getGovernmentNumber();
-        testUtils.invokeGetApi(Void.class, url, HttpStatus.CONFLICT, null);
+        String url = BASE_URL + "/createCarAndLinkRfid?rfidId=" + 302;
+        testUtils.invokePostApi(Void.class, url, HttpStatus.CONFLICT, carCreateDto);
     }
 
     @Test
