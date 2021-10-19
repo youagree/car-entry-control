@@ -1,6 +1,7 @@
 
 package ru.unit_techno.car_entry_control.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class BaseTestClass {
 
     @Autowired
     protected EventRepository eventRepository;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
 
     private static final String DB_NAME = "unit_techno";
     public static String DB_URL = null;

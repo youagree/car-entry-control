@@ -25,12 +25,12 @@ public class WSNotificationService {
         );
     }
 
-    public void sendActiveButSomethingUnavailable(String rfidLabelValue) {
+    public void sendActiveButSomethingUnavailable(String deviceMetaInfo) {
         brokerMessagingTemplate.convertAndSend(
                 notActiveTopic,
                 new BarrierUnavailable()
-                        .setBarrierName("Вспомогательный сервис является недоступным в данный момент")
-                        .setNotificationMessage(rfidLabelValue)
+                        .setBarrierName(deviceMetaInfo)
+                        .setNotificationMessage("Вспомогательный сервис является недоступным в данный момент")
         );
     }
 }
