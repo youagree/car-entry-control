@@ -19,8 +19,6 @@ import ru.unit.techno.ariss.log.action.lib.model.MetaObject;
 import ru.unit.techno.device.registration.api.DeviceResource;
 import ru.unit.techno.device.registration.api.dto.DeviceResponseDto;
 import ru.unit.techno.device.registration.api.enums.DeviceType;
-import ru.unit_techno.car_entry_control.aspect.RfidEvent;
-import ru.unit_techno.car_entry_control.aspect.enums.RfidEventType;
 import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
 import ru.unit_techno.car_entry_control.entity.Car;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
@@ -49,7 +47,6 @@ public class EventService {
     private final DeviceEventConfig eventConfig;
 
     @Transactional
-    @RfidEvent(value = RfidEventType.CHECK_RFID)
     public String rfidLabelCheck(RfidEntry rfidLabel) {
         Long barrierId = 0L;
         Long longRfidLabel = rfidLabel.getRfid();
@@ -106,7 +103,6 @@ public class EventService {
         }
     }
 
-    @RfidEvent(value = RfidEventType.CREATE_RFID_LABEL)
     @Transactional
     public void create() {
         log.info("start create new rfid label");
