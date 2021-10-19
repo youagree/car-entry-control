@@ -32,6 +32,7 @@ import ru.unit_techno.car_entry_control.repository.RfidLabelRepository;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -107,12 +108,16 @@ public class EventService {
 
     @RfidEvent(value = RfidEventType.CREATE_RFID_LABEL)
     @Transactional
-    public void create(Long rfidLabel) {
-        log.info("start create new rfid label {}", rfidLabel);
-        Optional<RfidLabel> foundedRfidLabel = rfidLabelRepository.findByRfidLabelValue(rfidLabel);
+    public void create() {
+        log.info("start create new rfid label");
+
+        /// TODO: 19.10.2021 ПОТОМ ЗАПРАШИВАТЬ ИДЕНТИФИКАТОР РФИД МЕТКИ С ПРОШИВКИ
+        Long onFirmware = new Random().nextLong();
+        Optional<RfidLabel> foundedRfidLabel = rfidLabelRepository.findByRfidLabelValue(onFirmware);
+
         if (foundedRfidLabel.isEmpty()) {
             RfidLabel newRfidLabel = new RfidLabel()
-                    .setRfidLabelValue(rfidLabel)
+                    .setRfidLabelValue(onFirmware)
                     .setState(StateEnum.NEW);
             rfidLabelRepository.save(newRfidLabel);
             log.info("successfully create new rfid label, {}, status is NEW, you need to activate this rfid", newRfidLabel);
