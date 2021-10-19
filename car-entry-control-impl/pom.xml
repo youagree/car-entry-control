@@ -13,10 +13,10 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <dependencies>
-        <dependency>
-            <groupId>ru.unit.techno</groupId>
-            <artifactId>user-model-infrastructure-impl</artifactId>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>ru.unit.techno</groupId>-->
+        <!--            <artifactId>user-model-infrastructure-impl</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>ru.unit.techno.device.registration.service</groupId>
             <artifactId>device-registration-api</artifactId>

@@ -16,8 +16,8 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("ru.unit_techno.car_entry_control"))
-                .paths(PathSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("ru"))
+                .paths(PathSelectors.regex("/.*"))
                 .build();
     }
 }

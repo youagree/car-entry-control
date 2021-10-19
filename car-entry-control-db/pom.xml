@@ -35,10 +35,10 @@
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase-plugin.version}</version>
         </dependency>
-        <dependency>
-            <groupId>ru.unit.techno</groupId>
-            <artifactId>user-model-infrastructure-db</artifactId>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>ru.unit.techno</groupId>-->
+        <!--            <artifactId>user-model-infrastructure-db</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>ru.unit.techno</groupId>
             <artifactId>ariss-log-action-db</artifactId>
