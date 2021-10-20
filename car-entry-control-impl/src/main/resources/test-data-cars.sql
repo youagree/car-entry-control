@@ -1,0 +1,22 @@
+SET search_path TO car_entry_control;
+
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (92, false, 'О723ОН 439', 'Жигуль', 'Белый');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (946, true, 'У813АН 24', 'Жигуль', 'Черный');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (430, true, 'С573СМ 651', 'BMW', 'Белый');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (794, false, 'У813АН 24', 'Жигуль', 'Красный');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (418, true, 'Н046СВ 080', 'Жигуль', 'Красный');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (622, false, 'Т413УВ 80', 'Audi', 'Зеленый');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (261, true, 'Н046СВ 080', 'Жигуль', 'Синий');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (144, true, 'В200ОМ 77', 'BMW', 'Белый');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (188, false, 'У813АН 24', 'Жигуль', 'Синий');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (975, false, 'О225КУ 73', 'Жигуль', 'Зеленый');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (862, false, 'С600ХУ 401', 'Жигуль', 'Синий');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (45, true, 'О723ОН 439', 'BMW', 'Белый');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (850, true, 'М217ТВ 58', 'Лада', 'Красный');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (891, false, 'О723ОН 439', 'Audi', 'Зеленый');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (433, false, 'С573СМ 651', 'Лада', 'Черный');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (868, true, 'Т413УВ 80', 'Жигуль', 'Синий');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (306, false, 'Т413УВ 80', 'Audi', 'Черный');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (104, true, 'У813АН 24', 'Жигуль', 'Черный');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (930, false, 'С573СМ 651', 'Жигуль', 'Черный');
+insert into cars (car_id, car_on_the_territory, government_number, car_model, car_colour) values (641, false, 'С190ХО 30', 'Audi', 'Синий');
