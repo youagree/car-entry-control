@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import ru.unit_techno.car_entry_control.dto.CarCreateDto;
+import ru.unit_techno.car_entry_control.dto.CardsWithRfidLabelsDto;
 import ru.unit_techno.car_entry_control.dto.RfidLabelDto;
+import ru.unit_techno.car_entry_control.entity.Car;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.utils.BaseTestClass;
@@ -150,5 +152,60 @@ public class RfidControllerTest extends BaseTestClass {
                 .setGovernmentNumber("З123БС 99");
 
         testUtils.invokePostApi(Void.class, url, HttpStatus.BAD_REQUEST, carCreateDto);
+    }
+
+    @Test
+    @DisplayName("Получение объектов рфид метка + тачка")
+    public void getAllRfidsWithCarsTest() {
+        RfidLabel rfid1 = rfidLabelRepository.saveAndFlush(new RfidLabel()
+                .setRfidLabelValue(111444L)
+                .setCreationDate(Timestamp.valueOf(LocalDateTime.now()))
+                .setState(StateEnum.NEW)
+                .setCar(null));
+
+        RfidLabel rfid2 = rfidLabelRepository.saveAndFlush(new RfidLabel()
+                .setRfidLabelValue(222444L)
+                .setCreationDate(Timestamp.valueOf(LocalDateTime.now()))
+                .setState(StateEnum.NEW)
+                .setCar(null));
+
+        RfidLabel rfid3 = rfidLabelRepository.saveAndFlush(new RfidLabel()
+                .setRfidLabelValue(333444L)
+                .setCreationDate(Timestamp.valueOf(LocalDateTime.now()))
+                .setState(StateEnum.NEW)
+                .setCar(null));
+
+        Car save2 = carRepository.save(new Car()
+                .setGovernmentNumber("А777АА 77")
+                .setCarColour("RED")
+                .setCarModel("ZHIGULL"));
+
+        Car save1 = carRepository.save(new Car()
+                .setGovernmentNumber("А222АА 77")
+                .setCarColour("BLUE")
+                .setCarModel("ZHIGULL"));
+
+        Car save = carRepository.save(new Car()
+                .setGovernmentNumber("А111АА 77")
+                .setCarColour("BAKLAJAN")
+                .setCarModel("ZHIGULL"));
+
+        rfidLabelRepository.save(rfid1.setCar(save));
+        rfidLabelRepository.save(rfid2.setCar(save2));
+        rfidLabelRepository.save(rfid3.setCar(save1));
+
+        String url = BASE_URL + "/allRfidsWithCars";
+
+        RestPageImpl<CardsWithRfidLabelsDto> pageOfDto1 = testUtils.invokeGetApi(new ParameterizedTypeReference<RestPageImpl<CardsWithRfidLabelsDto>>() {
+        }, url, HttpStatus.OK);
+
+        CardsWithRfidLabelsDto assertDto = new CardsWithRfidLabelsDto()
+                .setGovernmentNumber("А111АА 77")
+                .setRfidLabelValue(111444L)
+                .setCarColor("BAKLAJAN")
+                .setCarModel("ZHIGULL");
+
+        Assertions.assertEquals(pageOfDto1.getContent().size(), 3);
+        Assertions.assertTrue(pageOfDto1.getContent().contains(assertDto));
     }
 }

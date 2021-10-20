@@ -1,8 +1,6 @@
 
 package ru.unit_techno.car_entry_control.service;
 
-import static ru.unit_techno.car_entry_control.util.Utils.bind;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -10,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.unit_techno.car_entry_control.dto.CarCreateDto;
+import ru.unit_techno.car_entry_control.dto.CardsWithRfidLabelsDto;
 import ru.unit_techno.car_entry_control.dto.RfidLabelDto;
 import ru.unit_techno.car_entry_control.dto.request.EditRfidLabelRequest;
 import ru.unit_techno.car_entry_control.entity.Car;
@@ -24,6 +23,8 @@ import ru.unit_techno.car_entry_control.repository.RfidLabelRepository;
 import javax.persistence.EntityExistsException;
 import java.util.Date;
 import java.util.stream.Collectors;
+
+import static ru.unit_techno.car_entry_control.util.Utils.bind;
 
 @Service
 @RequiredArgsConstructor
@@ -102,6 +103,13 @@ public class RfidService {
         } else {
             throw new IllegalStateException("Cant deactivate NEW or NO_ACTIVE rfid label");
         }
+    }
+
+    public Page<CardsWithRfidLabelsDto> getAllRfidsWithCars(Pageable pageable) {
+        Page<RfidLabel> allRfidsWithCars = rfidLabelRepository.findAll(pageable);
+        return new PageImpl<>(allRfidsWithCars.stream()
+                .map(rfidMapper::toDtoWithCars)
+                .collect(Collectors.toList()), pageable, allRfidsWithCars.getTotalPages());
     }
 
     public Page<RfidLabelDto> getAllNewRfidsWithPaging(Pageable pageable, StateEnum state) {
