@@ -2,8 +2,13 @@
 package ru.unit_techno.car_entry_control.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.kaczmarzyk.spring.data.jpa.domain.Equal;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.JoinFetch;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +16,7 @@ import ru.unit_techno.car_entry_control.dto.CarCreateDto;
 import ru.unit_techno.car_entry_control.dto.CardsWithRfidLabelsDto;
 import ru.unit_techno.car_entry_control.dto.RfidLabelDto;
 import ru.unit_techno.car_entry_control.dto.request.EditRfidLabelRequest;
+import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.service.RfidService;
 
@@ -70,7 +76,10 @@ public class RfidController {
     }
 
     @GetMapping("/allRfidsWithCars")
-    public Page<CardsWithRfidLabelsDto> findAllRfidsWithCard(Pageable pageable) {
-        return rfidService.getAllRfidsWithCars(pageable);
+    public Page<CardsWithRfidLabelsDto> findAllRfidsWithCard(@JoinFetch(paths = "governmentNumber")
+            @And({@Spec(path = "rfidLabelValue", params = "rfidLabelValue", spec = Equal.class),
+            @Spec(path = "governmentNumber", params = "gosNumber", spec = Equal.class)
+    }) Specification<RfidLabel> specificationPageable, Pageable pageable) {
+        return rfidService.getAllRfidsWithCars(pageable, specificationPageable);
     }
 }

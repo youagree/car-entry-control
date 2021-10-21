@@ -3,6 +3,7 @@ package ru.unit_techno.car_entry_control.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +15,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
-public interface RfidLabelRepository extends JpaRepository<RfidLabel, Long> {
+public interface RfidLabelRepository extends JpaRepository<RfidLabel, Long>, JpaSpecificationExecutor<RfidLabel> {
     Optional<RfidLabel> findByRfidLabelValue(Long rfidLabelValue);
 
     @Modifying

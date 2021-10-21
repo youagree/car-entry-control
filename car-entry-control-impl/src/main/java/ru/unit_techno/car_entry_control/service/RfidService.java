@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.unit_techno.car_entry_control.dto.CarCreateDto;
@@ -106,8 +107,8 @@ public class RfidService {
         }
     }
 
-    public Page<CardsWithRfidLabelsDto> getAllRfidsWithCars(Pageable pageable) {
-        Page<RfidLabel> allRfidsWithCars = rfidLabelRepository.findAll(pageable);
+    public Page<CardsWithRfidLabelsDto> getAllRfidsWithCars(Pageable pageable, Specification<RfidLabel> specification) {
+        Page<RfidLabel> allRfidsWithCars = rfidLabelRepository.findAll(specification, pageable);
         return new PageImpl<>(allRfidsWithCars.stream()
                 .map(rfidMapper::toDtoWithCars)
                 .collect(Collectors.toList()), pageable, allRfidsWithCars.getTotalPages());
