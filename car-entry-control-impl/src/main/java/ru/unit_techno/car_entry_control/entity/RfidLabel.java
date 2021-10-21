@@ -6,8 +6,19 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -30,10 +41,13 @@ public class RfidLabel {
     private StateEnum state;
 
     @Column(name = "no_active_until")
-    private Timestamp noActiveUntil;
+    private LocalDate noActiveUntil;
+
+    @Column(name = "before_active_until")
+    private LocalDate beforeActiveUntil;
 
     @OneToOne
-    @JoinColumn(name="car_id")
+    @JoinColumn(name = "car_id")
     private Car car;
 
     @Column(name = "creation_date")

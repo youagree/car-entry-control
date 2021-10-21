@@ -1,6 +1,8 @@
 
 package ru.unit_techno.car_entry_control.service;
 
+import static ru.unit_techno.car_entry_control.util.Utils.bind;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,10 +23,8 @@ import ru.unit_techno.car_entry_control.repository.CarRepository;
 import ru.unit_techno.car_entry_control.repository.RfidLabelRepository;
 
 import javax.persistence.EntityExistsException;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.stream.Collectors;
-
-import static ru.unit_techno.car_entry_control.util.Utils.bind;
 
 @Service
 @RequiredArgsConstructor
@@ -93,13 +93,13 @@ public class RfidService {
     }
 
     @Transactional
-    public void deactivateUntilSomeDate(Date dateUntilDeactivated, Long rfidLabelId) {
+    public void deactivateUntilSomeDate(LocalDate before, LocalDate dateUntilDeactivated, Long rfidLabelId) {
         RfidLabel existRfid = rfidLabelRepository.findByRfidLabelValue(rfidLabelId).orElseThrow(
                 bind(CannotLinkNewRfidLabelToCarException::new, "rfid does not exist")
         );
 
         if (existRfid.getState() != StateEnum.NEW || existRfid.getState() != StateEnum.NO_ACTIVE) {
-            rfidLabelRepository.deactivateRfidLabelUntilSomeDate(dateUntilDeactivated, rfidLabelId);
+            rfidLabelRepository.deactivateRfidLabelUntilIntervalDate(before, dateUntilDeactivated, rfidLabelId);
         } else {
             throw new IllegalStateException("Cant deactivate NEW or NO_ACTIVE rfid label");
         }

@@ -4,8 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import ru.unit_techno.car_entry_control.dto.request.BoardRegisterDto;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
 import ru.unit_techno.car_entry_control.service.EventService;
 
@@ -37,12 +40,5 @@ public class EventController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createRfidLabel() {
         eventService.create();
-    }
-
-    @PostMapping("/registration")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> registerBoard (@RequestBody BoardRegisterDto boardRegisterDto) {
-        //todo проработать регистрацию платы в приложении
-        return new ResponseEntity<>("УСПЕШНО/НЕУДАЧНО", new HttpHeaders(), HttpStatus.OK);
     }
 }

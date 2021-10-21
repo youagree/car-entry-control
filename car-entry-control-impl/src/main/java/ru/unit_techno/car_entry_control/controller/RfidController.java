@@ -6,7 +6,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import ru.unit_techno.car_entry_control.dto.CarCreateDto;
 import ru.unit_techno.car_entry_control.dto.CardsWithRfidLabelsDto;
 import ru.unit_techno.car_entry_control.dto.RfidLabelDto;
@@ -14,7 +23,9 @@ import ru.unit_techno.car_entry_control.dto.request.EditRfidLabelRequest;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.service.RfidService;
 
-import java.util.Date;
+import javax.validation.Valid;
+import javax.validation.constraints.FutureOrPresent;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/ui/rfid")
@@ -50,9 +61,10 @@ public class RfidController {
 
     @PostMapping("/deactivateUntil")
     @ResponseStatus(HttpStatus.OK)
-    public void deactivateRfid(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") Date dateUntilDeactivated,
+    public void deactivateRfid(@Valid @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") @FutureOrPresent LocalDate dateUntilDeactivated,
+                               @Valid @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") @FutureOrPresent LocalDate dateBefore,
                                @RequestParam Long rfidLabelId) {
-        rfidService.deactivateUntilSomeDate(dateUntilDeactivated, rfidLabelId);
+        rfidService.deactivateUntilSomeDate(dateBefore, dateUntilDeactivated, rfidLabelId);
     }
 
     @GetMapping("/allRfidsByState")
