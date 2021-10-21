@@ -233,4 +233,21 @@ public class RfidControllerTest extends BaseTestClass {
         Assertions.assertEquals(byId.get().getBeforeActiveUntil(), now);
         Assertions.assertEquals(byId.get().getNoActiveUntil(), LocalDate.of(2025, 10, 10));
     }
+
+    @Test
+    @DisplayName("Блокировка рфида если у него заполнена дата блокировки")
+    public void blockSchedulerTest() {
+        rfidLabelRepository.saveAndFlush(new RfidLabel()
+                .setRfidLabelValue(333444L)
+                .setCreationDate(Timestamp.valueOf(LocalDateTime.now()))
+                .setState(StateEnum.ACTIVE)
+                .setBeforeActiveUntil(LocalDate.of(2021, 10, 20))
+                .setNoActiveUntil(LocalDate.of(2021, 11, 10))
+                .setCar(null));
+
+        doInTransactionVoid(() -> rfidLabelRepository.deactivateRfidWhenHaveDeactDate());
+
+        Optional<RfidLabel> rfidLabel = rfidLabelRepository.findByRfidLabelValue(333444L);
+        Assertions.assertEquals(rfidLabel.get().getState(), StateEnum.NO_ACTIVE);
+    }
 }

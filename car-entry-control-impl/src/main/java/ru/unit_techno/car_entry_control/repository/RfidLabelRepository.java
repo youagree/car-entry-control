@@ -34,4 +34,8 @@ public interface RfidLabelRepository extends JpaRepository<RfidLabel, Long> {
     void activateDeactivatedRfids();
 
     Page<RfidLabel> findAllByState (StateEnum state, Pageable sort);
+
+    @Modifying
+    @Query("update RfidLabel set state = 'NO_ACTIVE' where beforeActiveUntil < current_date")
+    void deactivateRfidWhenHaveDeactDate();
 }

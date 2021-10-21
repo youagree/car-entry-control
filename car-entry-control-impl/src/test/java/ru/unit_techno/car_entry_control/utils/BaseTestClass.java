@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.PostgreSQLContainer;
 import ru.unit.techno.ariss.log.action.lib.repository.EventRepository;
@@ -37,6 +38,9 @@ public class BaseTestClass {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @Autowired
+    protected TransactionTemplate txTemplate;
 
     private static final String DB_NAME = "unit_techno";
     public static String DB_URL = null;
@@ -68,5 +72,12 @@ public class BaseTestClass {
         rfidLabelRepository.flush();
         carRepository.flush();
         eventRepository.flush();
+    }
+
+    public void doInTransactionVoid(Runnable method) {
+        txTemplate.execute(tx -> {
+            method.run();
+            return tx;
+        });
     }
 }
