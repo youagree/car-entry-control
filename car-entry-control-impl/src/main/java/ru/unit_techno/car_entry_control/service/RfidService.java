@@ -1,8 +1,6 @@
 
 package ru.unit_techno.car_entry_control.service;
 
-import static ru.unit_techno.car_entry_control.util.Utils.bind;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,6 +24,8 @@ import ru.unit_techno.car_entry_control.util.Constant;
 import javax.persistence.EntityExistsException;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
+
+import static ru.unit_techno.car_entry_control.util.Utils.bind;
 
 @Service
 @RequiredArgsConstructor
@@ -118,6 +118,15 @@ public class RfidService {
         return new PageImpl<>(allByState.getContent().stream()
                 .map(rfidMapper::toDto)
                 .collect(Collectors.toList()), pageable, allByState.getTotalElements());
+    }
+
+    @Transactional
+    public void resumeRfidLabelState(Long rfidId) {
+        rfidLabelRepository.findByRfidLabelValue(rfidId).orElseThrow(
+                bind(CannotLinkNewRfidLabelToCarException::new, "rfid does not exist")
+        );
+
+        rfidLabelRepository.resumeRfidLabelState(rfidId);
     }
 
     private void updateRfid(RfidLabel existRfid, EditRfidLabelRequest editRequest) {

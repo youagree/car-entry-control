@@ -38,10 +38,10 @@ public class RfidController {
         rfidService.editRfidLabel(editRequest);
     }
 
-    @PostMapping("/resume/{rfidId}")
+    @PutMapping("/resume/{rfidId}")
     @ResponseStatus(HttpStatus.OK)
     public void resumeRfidLabel(@PathVariable Long rfidId) {
-
+        rfidService.resumeRfidLabelState(rfidId);
     }
 
     @PutMapping("/resetRfid/{rfidId}")

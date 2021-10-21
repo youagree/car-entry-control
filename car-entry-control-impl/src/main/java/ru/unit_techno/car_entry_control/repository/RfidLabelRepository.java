@@ -38,4 +38,8 @@ public interface RfidLabelRepository extends JpaRepository<RfidLabel, Long> {
     @Modifying
     @Query("update RfidLabel set state = 'NO_ACTIVE' where beforeActiveUntil < current_date")
     void deactivateRfidWhenHaveDeactDate();
+
+    @Modifying
+    @Query("update RfidLabel set state = 'ACTIVE', beforeActiveUntil = NULL, noActiveUntil = NULL where rfidLabelValue = :rfidId")
+    void resumeRfidLabelState(@Param("rfidId") Long rfidId);
 }

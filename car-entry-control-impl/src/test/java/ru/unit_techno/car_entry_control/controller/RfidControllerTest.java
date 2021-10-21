@@ -250,4 +250,25 @@ public class RfidControllerTest extends BaseTestClass {
         Optional<RfidLabel> rfidLabel = rfidLabelRepository.findByRfidLabelValue(333444L);
         Assertions.assertEquals(rfidLabel.get().getState(), StateEnum.NO_ACTIVE);
     }
+
+    @Test
+    @DisplayName("Активация заблокированной метки")
+    public void activateBlockedRfid() {
+        Long rfidLabelValue = 333444L;
+
+        rfidLabelRepository.saveAndFlush(new RfidLabel()
+                .setRfidLabelValue(rfidLabelValue)
+                .setCreationDate(Timestamp.valueOf(LocalDateTime.now()))
+                .setState(StateEnum.NO_ACTIVE)
+                .setBeforeActiveUntil(LocalDate.of(2021, 10, 20))
+                .setNoActiveUntil(LocalDate.of(2021, 11, 10))
+                .setCar(null));
+
+        String url = BASE_URL + "/resume/" + rfidLabelValue;
+
+        testUtils.invokePutApi(Void.class, url, HttpStatus.OK, null);
+
+        Optional<RfidLabel> rfidLabel = rfidLabelRepository.findByRfidLabelValue(rfidLabelValue);
+        Assertions.assertEquals(rfidLabel.get().getState(), StateEnum.ACTIVE);
+    }
 }
