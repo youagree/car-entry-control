@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
@@ -26,8 +26,8 @@ public interface RfidLabelRepository extends JpaRepository<RfidLabel, Long> {
     void deleteByRfidLabelValue(@Param("rfidId") Long rfidLabelValue);
 
     @Modifying
-    @Query("update RfidLabel set state = 'NO_ACTIVE', noActiveUntil = :date where rfidLabelValue = :rfidId")
-    void deactivateRfidLabelUntilSomeDate(@Param("date") Date date, @Param("rfidId") Long rfidId);
+    @Query("update RfidLabel set beforeActiveUntil = :dateBefore, noActiveUntil = :dateUntil where rfidLabelValue = :rfidId")
+    void deactivateRfidLabelUntilIntervalDate(@Param("dateBefore") LocalDate dateBefore, @Param("dateUntil") LocalDate until, @Param("rfidId") Long rfidId);
 
     @Modifying
     @Query("update RfidLabel set state = 'ACTIVE', noActiveUntil = NULL where noActiveUntil < current_timestamp")

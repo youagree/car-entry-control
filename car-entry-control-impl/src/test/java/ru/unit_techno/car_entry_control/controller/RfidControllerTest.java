@@ -16,7 +16,9 @@ import ru.unit_techno.car_entry_control.utils.BaseTestClass;
 import ru.unit_techno.car_entry_control.utils.RestPageImpl;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -207,5 +209,28 @@ public class RfidControllerTest extends BaseTestClass {
 
         Assertions.assertEquals(pageOfDto1.getContent().size(), 3);
         Assertions.assertTrue(pageOfDto1.getContent().contains(assertDto));
+    }
+
+    @Test
+    @DisplayName("постановка рфид на паузу")
+    public void makePauseRfid() {
+        Long rfidLabel = 123L;
+        rfidLabelRepository.save(new RfidLabel()
+                .setRfidLabelValue(rfidLabel)
+                .setState(StateEnum.ACTIVE));
+
+        LocalDate now = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedString = now.format(formatter);
+
+        testUtils.invokePostApi(Void.class, BASE_URL + "/deactivateUntil?dateUntilDeactivated={1}&dateBefore={2}&rfidLabelId={3}",
+                HttpStatus.OK,
+                null,
+                "2025-10-10", formattedString, 123);
+
+        Optional<RfidLabel> byId = rfidLabelRepository.findByRfidLabelValue(rfidLabel);
+        Assertions.assertNotNull(byId.get());
+        Assertions.assertEquals(byId.get().getBeforeActiveUntil(), now);
+        Assertions.assertEquals(byId.get().getNoActiveUntil(), LocalDate.of(2025, 10, 10));
     }
 }
