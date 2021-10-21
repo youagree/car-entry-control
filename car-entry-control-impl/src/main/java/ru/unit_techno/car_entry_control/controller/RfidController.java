@@ -40,7 +40,7 @@ public class RfidController {
 
     @PostMapping("/resume/{rfidId}")
     @ResponseStatus(HttpStatus.OK)
-    public void resumeRfidLabel() {
+    public void resumeRfidLabel(@PathVariable Long rfidId) {
 
     }
 
