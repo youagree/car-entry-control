@@ -21,6 +21,7 @@ import ru.unit_techno.car_entry_control.mapper.CarMapper;
 import ru.unit_techno.car_entry_control.mapper.RfidMapper;
 import ru.unit_techno.car_entry_control.repository.CarRepository;
 import ru.unit_techno.car_entry_control.repository.RfidLabelRepository;
+import ru.unit_techno.car_entry_control.util.Constant;
 
 import javax.persistence.EntityExistsException;
 import java.time.LocalDate;
@@ -133,7 +134,7 @@ public class RfidService {
     }
 
     public void validateGovernmentNumber(String governmentNumber) {
-        if (!governmentNumber.matches("^[АВЕКМНОРСТУХ]\\d{3}[АВЕКМНОРСТУХ]{2} \\d{2,3}$")) {
+        if (!governmentNumber.matches(Constant.REGEX)) {
             throw new IllegalArgumentException("Invalid government number: " + governmentNumber + ". Please try again!");
         }
 
