@@ -31,7 +31,7 @@ public class RfidControllerTest extends BaseTestClass {
     public void getFillRfid() {
         CarCreateDto carCreateDto = new CarCreateDto()
                 .setCarColour("RED")
-                .setGovernmentNumber("Т888ТТ 77")
+                .setGovernmentNumber("Т888ТТ77")
                 .setCarModel("LADA");
 
         RfidLabel rfidLabel = rfidLabelRepository.saveAndFlush(
@@ -54,7 +54,7 @@ public class RfidControllerTest extends BaseTestClass {
     public void getFillRfidBadRfidId() {
         CarCreateDto carCreateDto = new CarCreateDto()
                 .setCarColour("RED")
-                .setGovernmentNumber("Т888ТТ 77")
+                .setGovernmentNumber("Т888ТТ77")
                 .setCarModel("LADA");
 
         String url = BASE_URL + "/createCarAndLinkRfid?rfidId=" + 302;
@@ -106,7 +106,7 @@ public class RfidControllerTest extends BaseTestClass {
         CarCreateDto carCreateDto = new CarCreateDto()
                 .setCarModel("BMW")
                 .setCarColour("WHITE")
-                .setGovernmentNumber("А888КК 77");
+                .setGovernmentNumber("А888КК77");
 
         testUtils.invokePostApi(Void.class, url, HttpStatus.CREATED, carCreateDto);
 
@@ -114,7 +114,7 @@ public class RfidControllerTest extends BaseTestClass {
         RfidLabel label = byRfidLabelValue.get();
 
         Assertions.assertEquals(label.getState(), StateEnum.ACTIVE);
-        Assertions.assertEquals(label.getCar().getGovernmentNumber(), "А888КК 77");
+        Assertions.assertEquals(label.getCar().getGovernmentNumber(), "А888КК77");
     }
 
     @Test
@@ -131,7 +131,7 @@ public class RfidControllerTest extends BaseTestClass {
         CarCreateDto carCreateDto = new CarCreateDto()
                 .setCarModel("BMW")
                 .setCarColour("WHITE")
-                .setGovernmentNumber("А888КК 77");
+                .setGovernmentNumber("А888КК77");
 
         testUtils.invokePostApi(Void.class, url, HttpStatus.CONFLICT, carCreateDto);
     }
