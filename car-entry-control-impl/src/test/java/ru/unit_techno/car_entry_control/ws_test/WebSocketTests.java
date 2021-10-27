@@ -1,7 +1,13 @@
 package ru.unit_techno.car_entry_control.ws_test;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -21,8 +27,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class WebSocketTests extends BaseTestClass {
 
@@ -67,13 +71,14 @@ public class WebSocketTests extends BaseTestClass {
     @DisplayName("Проверка, что из вебсокета получено оповещение о том, что какой то из сервисов отказал")
     public void checkActiveButSomethingUnavailablePos() {
         StompSession session = stompClient
-                .connect("ws://localhost:" + port + "/gs-guide-websocket", new StompSessionHandlerAdapter() {})
-                .get(1, SECONDS);
+                .connect("ws://localhost:" + port + "/gs-guide-websocket", new StompSessionHandlerAdapter() {
+                })
+                .get(3, SECONDS);
         session.subscribe("/topic/newrfidlabel", new DefaultStompFrameHandler());
 
         notificationService.sendActiveButSomethingUnavailable("1234");
 
-        String receivedMessage = blockingQueue.poll(1, SECONDS);
+        String receivedMessage = blockingQueue.poll(3, SECONDS);
         BarrierUnavailable result = objectMapper.readValue(receivedMessage, BarrierUnavailable.class);
         Assertions.assertEquals(result.getBarrierName(), "1234");
         Assertions.assertEquals(result.getNotificationMessage(), "Вспомогательный сервис является недоступным в данный момент");

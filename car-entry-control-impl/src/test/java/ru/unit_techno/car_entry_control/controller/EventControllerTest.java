@@ -65,6 +65,8 @@ public class EventControllerTest extends BaseTestClass {
                         .setCar(car)
         );
 
-        testUtils.invokePostApi(Void.class, EVENT, HttpStatus.OK, new RfidEntry().setRfid(124L).setDeviceId(5463L));
+        testUtils.invokePostApi(Void.class, EVENT, HttpStatus.OK, new RfidEntry()
+                .setRfid(124L)
+                .setDeviceId(5463L));
     }
 }

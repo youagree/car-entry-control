@@ -17,12 +17,14 @@ public class RfidActivationScheduler {
     @Scheduled(cron = "0 */5 * * * *", zone = "")
     @Transactional
     public void activateDeactivatedRfids() {
+        log.info("start activate rfids with status NO_ACTIVE");
         rfidLabelRepository.activateDeactivatedRfids();
     }
 
     @Scheduled(cron = "0 */10 * * * *", zone = "")
     @Transactional
     public void deactivateBlockedRfid() {
+        log.info("start deactivateRfidWhenHaveDeactivateDate");
         rfidLabelRepository.deactivateRfidWhenHaveDeactDate();
     }
 }

@@ -27,11 +27,11 @@ public interface RfidLabelRepository extends JpaRepository<RfidLabel, Long>, Jpa
     void deleteByRfidLabelValue(@Param("rfidId") Long rfidLabelValue);
 
     @Modifying
-    @Query("update RfidLabel set beforeActiveUntil = :dateBefore, noActiveUntil = :dateUntil where rfidLabelValue = :rfidId")
+    @Query("update RfidLabel set beforeActiveUntil = :dateBefore, noActiveUntil = :dateUntil, state = 'NO_ACTIVE' where rfidLabelValue = :rfidId")
     void deactivateRfidLabelUntilIntervalDate(@Param("dateBefore") LocalDate dateBefore, @Param("dateUntil") LocalDate until, @Param("rfidId") Long rfidId);
 
     @Modifying
-    @Query("update RfidLabel set state = 'ACTIVE', noActiveUntil = NULL where noActiveUntil < current_timestamp")
+    @Query("update RfidLabel set state = 'ACTIVE', noActiveUntil = NULL where noActiveUntil < current_timestamp and state = 'NO_ACTIVE'")
     void activateDeactivatedRfids();
 
     Page<RfidLabel> findAllByState (StateEnum state, Pageable sort);
