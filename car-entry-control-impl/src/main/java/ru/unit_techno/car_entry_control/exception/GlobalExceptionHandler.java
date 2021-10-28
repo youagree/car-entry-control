@@ -10,6 +10,7 @@ import ru.unit_techno.car_entry_control.exception.custom.CantCreateRfidLabelExce
 import ru.unit_techno.car_entry_control.exception.custom.CarNotFoundException;
 import ru.unit_techno.car_entry_control.exception.custom.RfidAccessDeniedException;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
@@ -43,6 +44,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
     public void handleIllegalArgumentException(HttpServletRequest request, RuntimeException ex) {
+        log.error(ex.getMessage(), ex);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public void handleIllegalEntityNotFoundException(HttpServletRequest request, EntityNotFoundException ex) {
         log.error(ex.getMessage(), ex);
     }
 }
