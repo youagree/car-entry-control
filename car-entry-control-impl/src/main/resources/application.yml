@@ -3,7 +3,8 @@ server:
 
 logging:
   level:
-    org.springframework.web: DEBUG
+    org.springframework: INFO
+    ru.unit_techno.car_entry_control: DEBUG
 
 ws:
   topics:
