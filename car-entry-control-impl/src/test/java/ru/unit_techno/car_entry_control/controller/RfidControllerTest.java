@@ -233,8 +233,8 @@ public class RfidControllerTest extends BaseTestClass {
 
         Optional<RfidLabel> byId = rfidLabelRepository.findByRfidLabelValue(rfidLabel);
         Assertions.assertNotNull(byId.get());
-        Assertions.assertEquals(byId.get().getBeforeActiveUntil(), now);
-        Assertions.assertEquals(byId.get().getNoActiveUntil(), LocalDate.of(2025, 10, 10));
+        Assertions.assertEquals(byId.get().getPauseRfidFrom(), now);
+        Assertions.assertEquals(byId.get().getPauseRfidTo(), LocalDate.of(2025, 10, 10));
     }
 
     @Test
@@ -244,8 +244,8 @@ public class RfidControllerTest extends BaseTestClass {
                 .setRfidLabelValue(333444L)
                 .setCreationDate(Timestamp.valueOf(LocalDateTime.now()))
                 .setState(StateEnum.ACTIVE)
-                .setBeforeActiveUntil(LocalDate.of(2021, 10, 20))
-                .setNoActiveUntil(LocalDate.of(2021, 11, 10))
+                .setPauseRfidFrom(LocalDate.of(2021, 10, 20))
+                .setPauseRfidTo(LocalDate.of(2021, 11, 10))
                 .setCar(null));
 
         doInTransactionVoid(() -> rfidLabelRepository.deactivateRfidWhenHaveDeactDate());
@@ -263,8 +263,8 @@ public class RfidControllerTest extends BaseTestClass {
                 .setRfidLabelValue(rfidLabelValue)
                 .setCreationDate(Timestamp.valueOf(LocalDateTime.now()))
                 .setState(StateEnum.NO_ACTIVE)
-                .setBeforeActiveUntil(LocalDate.of(2021, 10, 20))
-                .setNoActiveUntil(LocalDate.of(2021, 11, 10))
+                .setPauseRfidFrom(LocalDate.of(2021, 10, 20))
+                .setPauseRfidTo(LocalDate.of(2021, 11, 10))
                 .setCar(null));
 
         String url = BASE_URL + "/resume/" + rfidLabelValue;
