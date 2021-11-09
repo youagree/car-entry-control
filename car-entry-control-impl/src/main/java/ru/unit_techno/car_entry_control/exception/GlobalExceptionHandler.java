@@ -5,11 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.unit_techno.car_entry_control.exception.custom.CannotLinkNewRfidLabelToCarException;
-import ru.unit_techno.car_entry_control.exception.custom.CantCreateRfidLabelException;
-import ru.unit_techno.car_entry_control.exception.custom.CarNotFoundException;
-import ru.unit_techno.car_entry_control.exception.custom.RfidAccessDeniedException;
+import ru.unit_techno.car_entry_control.dto.ExceptionHandleDto;
+import ru.unit_techno.car_entry_control.exception.custom.*;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,13 +42,36 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public void handleIllegalArgumentException(HttpServletRequest request, RuntimeException ex) {
+    public ExceptionHandleDto handleIllegalArgumentException(HttpServletRequest request, RuntimeException ex) {
         log.error(ex.getMessage(), ex);
+        return new ExceptionHandleDto().setMessage(ex.getMessage()).setStatusCode(400);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
-    public void handleIllegalEntityNotFoundException(HttpServletRequest request, EntityNotFoundException ex) {
+    public ExceptionHandleDto handleIllegalEntityNotFoundException(HttpServletRequest request, EntityNotFoundException ex) {
         log.error(ex.getMessage(), ex);
+        return new ExceptionHandleDto().setStatusCode(404).setMessage(ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(EntityExistsException.class)
+    public ExceptionHandleDto handleEntityExistException(HttpServletRequest request, EntityExistsException ex) {
+        log.error(ex.getMessage(), ex);
+        return new ExceptionHandleDto().setStatusCode(409).setMessage(ex.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.REQUEST_TIMEOUT)
+    @ExceptionHandler(RfidScannerTimeoutException.class)
+    public ExceptionHandleDto handleScannerTimeoutException(HttpServletRequest request, RfidScannerTimeoutException ex) {
+        log.error(ex.getMessage(), ex);
+        return new ExceptionHandleDto().setMessage(ex.getMessage()).setStatusCode(408);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(RfidScannerFatalErrorException.class)
+    public ExceptionHandleDto handleRfidScannerFatalError(HttpServletRequest request, RfidScannerFatalErrorException ex) {
+        log.error(ex.getMessage(), ex);
+        return new ExceptionHandleDto().setMessage(ex.getMessage()).setStatusCode(500);
     }
 }

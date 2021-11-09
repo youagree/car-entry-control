@@ -112,6 +112,8 @@ public class EventService {
         Long onFirmware = new Random().nextLong();
         Optional<RfidLabel> foundedRfidLabel = rfidLabelRepository.findByRfidLabelValue(onFirmware);
 
+        /// TODO: 09.11.2021 Докинуть эксепшены для ситуаций когда считыватель отъебнул и когда прошел таймаут
+
         if (foundedRfidLabel.isEmpty()) {
             RfidLabel newRfidLabel = new RfidLabel()
                     .setRfidLabelValue(onFirmware)
