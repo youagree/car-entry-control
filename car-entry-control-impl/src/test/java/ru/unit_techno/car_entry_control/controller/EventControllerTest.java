@@ -53,7 +53,7 @@ public class EventControllerTest extends BaseTestClass {
 
         Car car = carRepository.saveAndFlush(
                 new Car()
-                        .setCarColour("RED")
+                        .setCarColor("RED")
                         .setGovernmentNumber("А777АА 77")
                         .setCarModel("LADA")
         );

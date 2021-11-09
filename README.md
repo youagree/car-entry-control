@@ -15,7 +15,7 @@
 **Список параметров:**
 ```json
 {
-  "carColour": "string",
+  "carColor": "string",
   "carModel": "string",
   "governmentNumber": "string"
 }
@@ -36,7 +36,7 @@
 
 ```json
 {
-  "carColour": "string",
+  "carColor": "string",
   "carModel": "string",
   "governmentNumber": "string"
 }

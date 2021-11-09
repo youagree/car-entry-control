@@ -30,7 +30,8 @@ public class RfidControllerTest extends BaseTestClass {
     @DisplayName("Создание новой машины и привязывание её к существующей метке")
     public void getFillRfid() {
         CarCreateDto carCreateDto = new CarCreateDto()
-                .setCarColour("RED")
+                .setRfidValue(1234511L)
+                .setCarColor("RED")
                 .setGovernmentNumber("Т888ТТ77")
                 .setCarModel("LADA");
 
@@ -41,7 +42,7 @@ public class RfidControllerTest extends BaseTestClass {
         );
 
         //привязываем неактивный рфид к машине и переводим в статус active
-        String url = BASE_URL + "/createCarAndLinkRfid?rfidId=" + rfidLabel.getRfidLabelValue();
+        String url = BASE_URL + "/createCarAndLinkRfid?rfidId";
         testUtils.invokePostApi(Void.class, url, HttpStatus.CREATED, carCreateDto);
 
         Optional<RfidLabel> byId = rfidLabelRepository.findById(rfidLabel.getId());
@@ -53,7 +54,7 @@ public class RfidControllerTest extends BaseTestClass {
     @DisplayName("при привязке к рфид, рфид не был найден")
     public void getFillRfidBadRfidId() {
         CarCreateDto carCreateDto = new CarCreateDto()
-                .setCarColour("RED")
+                .setCarColor("RED")
                 .setGovernmentNumber("Т888ТТ77")
                 .setCarModel("LADA");
 
@@ -97,15 +98,16 @@ public class RfidControllerTest extends BaseTestClass {
     @DisplayName("Создание машины и прикрепление этой машины к определенной метке")
     public void createCarWithBlankRfidTest() {
         Long rfidLabel = 99999L;
-        String url = BASE_URL + "/createCarAndLinkRfid?rfidId=99999";
+        String url = BASE_URL + "/createCarAndLinkRfid";
 
         rfidLabelRepository.save(new RfidLabel()
                 .setRfidLabelValue(rfidLabel)
                 .setState(StateEnum.NEW));
 
         CarCreateDto carCreateDto = new CarCreateDto()
+                .setRfidValue(99999L)
                 .setCarModel("BMW")
-                .setCarColour("WHITE")
+                .setCarColor("WHITE")
                 .setGovernmentNumber("А888КК77");
 
         testUtils.invokePostApi(Void.class, url, HttpStatus.CREATED, carCreateDto);
@@ -130,7 +132,7 @@ public class RfidControllerTest extends BaseTestClass {
 
         CarCreateDto carCreateDto = new CarCreateDto()
                 .setCarModel("BMW")
-                .setCarColour("WHITE")
+                .setCarColor("WHITE")
                 .setGovernmentNumber("А888КК77");
 
         testUtils.invokePostApi(Void.class, url, HttpStatus.CONFLICT, carCreateDto);
@@ -149,7 +151,7 @@ public class RfidControllerTest extends BaseTestClass {
 
         CarCreateDto carCreateDto = new CarCreateDto()
                 .setCarModel("BMW")
-                .setCarColour("WHITE")
+                .setCarColor("WHITE")
                 //попытка привязать к машине с неверным номером
                 .setGovernmentNumber("З123БС 99");
 
@@ -179,17 +181,17 @@ public class RfidControllerTest extends BaseTestClass {
 
         Car save2 = carRepository.save(new Car()
                 .setGovernmentNumber("А777АА 77")
-                .setCarColour("RED")
+                .setCarColor("RED")
                 .setCarModel("ZHIGULL"));
 
         Car save1 = carRepository.save(new Car()
                 .setGovernmentNumber("А222АА 77")
-                .setCarColour("BLUE")
+                .setCarColor("BLUE")
                 .setCarModel("ZHIGULL"));
 
         Car save = carRepository.save(new Car()
                 .setGovernmentNumber("А111АА 77")
-                .setCarColour("BAKLAJAN")
+                .setCarColor("BAKLAJAN")
                 .setCarModel("ZHIGULL"));
 
         rfidLabelRepository.save(rfid1.setCar(save));
@@ -208,7 +210,8 @@ public class RfidControllerTest extends BaseTestClass {
                 .setCarModel("ZHIGULL");
 
         Assertions.assertEquals(pageOfDto1.getContent().size(), 3);
-        Assertions.assertTrue(pageOfDto1.getContent().contains(assertDto));
+        Assertions.assertEquals(pageOfDto1.stream()
+                .filter(obj -> obj.getRfidLabelValue() == 111444L).count(), 1);
     }
 
     @Test

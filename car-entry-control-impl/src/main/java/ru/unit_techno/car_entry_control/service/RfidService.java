@@ -1,8 +1,6 @@
 
 package ru.unit_techno.car_entry_control.service;
 
-import static ru.unit_techno.car_entry_control.util.Utils.bind;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,6 +27,8 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
+import static ru.unit_techno.car_entry_control.util.Utils.bind;
+
 @Service
 @RequiredArgsConstructor
 public class RfidService {
@@ -39,12 +39,12 @@ public class RfidService {
     private final CarMapper carMapper;
 
     @Transactional
-    public void createCardAndLinkRfid(Long rfidId, CarCreateDto carCreateDto) {
+    public void createCardAndLinkRfid(CarCreateDto carCreateDto) {
         validateGovernmentNumber(carCreateDto.getGovernmentNumber());
         Car car = carMapper.toDomain(carCreateDto);
         Car savedCar = carRepository.save(car);
 
-        RfidLabel existRfid = rfidLabelRepository.findByRfidLabelValue(rfidId).orElseThrow(
+        RfidLabel existRfid = rfidLabelRepository.findByRfidLabelValue(carCreateDto.getRfidValue()).orElseThrow(
                 bind(CannotLinkNewRfidLabelToCarException::new, "rfid does not exist")
         );
 
@@ -137,7 +137,7 @@ public class RfidService {
             existRfid.getCar().setGovernmentNumber(editRequest.getGovernmentNumber());
         }
         if (!editRequest.getCarColor().isEmpty()) {
-            existRfid.getCar().setCarColour(editRequest.getCarColor());
+            existRfid.getCar().setCarColor(editRequest.getCarColor());
         }
         if (!editRequest.getCarModel().isEmpty()) {
             existRfid.getCar().setCarModel(editRequest.getCarModel());

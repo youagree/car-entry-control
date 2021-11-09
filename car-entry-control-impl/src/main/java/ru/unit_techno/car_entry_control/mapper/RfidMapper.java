@@ -12,7 +12,7 @@ public interface RfidMapper {
     RfidLabelDto toDto(RfidLabel label);
 
     @Mappings({
-            @Mapping(source = "label.car.carColour", target = "carColor"),
+            @Mapping(source = "label.car.carColor", target = "carColor"),
             @Mapping(source = "label.car.governmentNumber", target = "governmentNumber"),
             @Mapping(source = "label.car.carModel", target = "carModel")
     })

@@ -28,7 +28,7 @@
             <column name="car_on_the_territory" type="BOOLEAN"/>
             <column name="government_number" type="VARCHAR"/>
             <column name="car_model" type="VARCHAR"/>
-            <column name="car_colour" type="VARCHAR"/>
+            <column name="car_color" type="VARCHAR"/>
         </createTable>
     </changeSet>
 

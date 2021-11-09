@@ -1,10 +1,10 @@
 package ru.unit_techno.car_entry_control.entity;
 
-import lombok.*;
-import org.hibernate.Hibernate;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -27,8 +27,8 @@ public class Car {
     @Column(name = "car_model")
     private String carModel;
 
-    @Column(name = "car_colour")
-    private String carColour;
+    @Column(name = "car_color")
+    private String carColor;
 
     @Column(name = "car_on_the_territory")
     private Boolean carOnTheTerritory;
