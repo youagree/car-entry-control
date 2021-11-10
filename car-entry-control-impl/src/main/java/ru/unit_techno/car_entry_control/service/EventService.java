@@ -79,25 +79,25 @@ public class EventService {
         } catch (EntityNotFoundException e) {
             log.error("unknown barrier", e);
             MetaObject metaObject = eventConfig.getType().get(barrierId);
-            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo());
+            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierId);
             catchAction(rfidLabel, rfid, ActionStatus.UNKNOWN, e);
             return "";
         } catch (RfidAccessDeniedException e) {
             // TODO: 03.08.2021 написать тест и проверить то заполняется гос номер
             MetaObject metaObject = eventConfig.getType().get(barrierId);
-            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo());
+            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierId);
             log.error("unknown barrier", e);
             catchAction(rfidLabel, rfid, ActionStatus.STOP, e);
             return "";
         } catch (FeignException e) {
             MetaObject metaObject = eventConfig.getType().get(barrierId);
-            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo());
+            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierId);
             log.error("Service not available", e);
             catchActionWhenFeignException(rfidLabel, rfid, ActionStatus.ACTIVE, e);
             return "";
         } catch (Exception e) {
             MetaObject metaObject = eventConfig.getType().get(barrierId);
-            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo());
+            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierId);
             log.error("exception when try to open barrier", e);
             catchAction(rfidLabel, rfid, ActionStatus.UNKNOWN, e);
             return "";

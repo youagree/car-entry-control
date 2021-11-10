@@ -25,11 +25,12 @@ public class WSNotificationService {
         );
     }
 
-    public void sendActiveButSomethingUnavailable(String deviceMetaInfo) {
+    public void sendActiveButSomethingUnavailable(String deviceMetaInfo, Long deviceId) {
         brokerMessagingTemplate.convertAndSend(
                 notActiveTopic,
                 new BarrierUnavailable()
                         .setBarrierName(deviceMetaInfo)
+                        .setDeviceId(deviceId)
                         .setNotificationMessage("Вспомогательный сервис является недоступным в данный момент")
         );
     }

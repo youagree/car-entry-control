@@ -6,5 +6,6 @@ import lombok.Data;
 public class BarrierUnavailable {
 
     private String barrierName;
+    private Long deviceId;
     private String notificationMessage;
 }

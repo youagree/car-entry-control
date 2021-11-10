@@ -76,11 +76,12 @@ public class WebSocketTests extends BaseTestClass {
                 .get(3, SECONDS);
         session.subscribe("/topic/newrfidlabel", new DefaultStompFrameHandler());
 
-        notificationService.sendActiveButSomethingUnavailable("1234");
+        notificationService.sendActiveButSomethingUnavailable("1234", 1234L);
 
         String receivedMessage = blockingQueue.poll(3, SECONDS);
         BarrierUnavailable result = objectMapper.readValue(receivedMessage, BarrierUnavailable.class);
         Assertions.assertEquals(result.getBarrierName(), "1234");
+        Assertions.assertEquals(result.getDeviceId(), 1234L);
         Assertions.assertEquals(result.getNotificationMessage(), "Вспомогательный сервис является недоступным в данный момент");
     }
 
