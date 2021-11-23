@@ -25,7 +25,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableJpaRepositories(basePackages = {
 		//todo release 2.0
 		//"ru.unit_techno.user.model.impl.repository",
-
 		"ru.unit_techno.car_entry_control.repository",
 		"ru.unit.techno.ariss.log.action.lib.repository"})
 public class CarEntryControlApplication {

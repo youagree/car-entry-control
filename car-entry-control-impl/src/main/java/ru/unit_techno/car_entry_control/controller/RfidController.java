@@ -3,6 +3,7 @@ package ru.unit_techno.car_entry_control.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
+import net.kaczmarzyk.spring.data.jpa.domain.In;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.JoinFetch;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
@@ -84,13 +85,12 @@ public class RfidController {
     }
 
     //todo покрыть тестом
-    //todo не работает сортировка по госномер
     @GetMapping("/allRfidsWithCars")
     public Page<CardsWithRfidLabelsDto> findAllRfidsWithCard(
-            @JoinFetch(paths = "car")
+            @JoinFetch(paths = "car", alias = "c")
             @And({@Spec(path = "rfidLabelValue", params = "rfidLabelValue", spec = Equal.class),
-                    @Spec(path = "car.governmentNumber", params = "governmentNumber", spec = Equal.class),
-                    @Spec(path = "state", params = "state", spec = Equal.class)
+                    @Spec(path = "c.governmentNumber", params = "governmentNumber", spec = Equal.class),
+                    @Spec(path = "state", params = "state", paramSeparator = ',', spec = In.class)
             }) Specification<RfidLabel> specificationPageable, Pageable pageable) {
         return rfidService.getAllRfidsWithCars(pageable, specificationPageable);
     }
