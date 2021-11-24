@@ -47,7 +47,7 @@ public class EventService {
     private final DeviceEventConfig eventConfig;
 
     @Transactional
-    public String rfidLabelCheck(RfidEntry rfidLabel) {
+    public void rfidLabelCheck(RfidEntry rfidLabel) {
         Long barrierId = 0L;
         Long longRfidLabel = rfidLabel.getRfid();
         log.info("rfid id is: {}", longRfidLabel);
@@ -74,33 +74,27 @@ public class EventService {
                     rfidLabel.getRfid(),
                     rfid.getCar().getGovernmentNumber(),
                     ActionStatus.ACTIVE);
-
-            return rfid.getRfidLabelValue().toString();
         } catch (EntityNotFoundException e) {
             log.error("unknown barrier", e);
             MetaObject metaObject = eventConfig.getType().get(barrierId);
             notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierId);
             catchAction(rfidLabel, rfid, ActionStatus.UNKNOWN, e);
-            return "";
         } catch (RfidAccessDeniedException e) {
             // TODO: 03.08.2021 написать тест и проверить то заполняется гос номер
             MetaObject metaObject = eventConfig.getType().get(barrierId);
             notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierId);
             log.error("unknown barrier", e);
-            catchAction(rfidLabel, rfid, ActionStatus.STOP, e);
-            return "";
+            catchAction(rfidLabel, rfid, ActionStatus.NO_ACTIVE, e);
         } catch (FeignException e) {
             MetaObject metaObject = eventConfig.getType().get(barrierId);
             notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierId);
             log.error("Service not available", e);
             catchActionWhenFeignException(rfidLabel, rfid, ActionStatus.ACTIVE, e);
-            return "";
         } catch (Exception e) {
             MetaObject metaObject = eventConfig.getType().get(barrierId);
             notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierId);
             log.error("exception when try to open barrier", e);
             catchAction(rfidLabel, rfid, ActionStatus.UNKNOWN, e);
-            return "";
         }
     }
 

@@ -1,9 +1,7 @@
 package ru.unit_techno.car_entry_control.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,12 +26,8 @@ public class EventController {
      */
     @PostMapping("/event")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Long> eventHandler(@RequestBody RfidEntry rfidEntry) throws Exception {
+    public void eventHandler(@RequestBody RfidEntry rfidEntry) {
         eventService.rfidLabelCheck(rfidEntry);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.CONTENT_LENGTH, String.valueOf(rfidEntry.getDeviceId().toString().length()));
-        return new ResponseEntity<>(rfidEntry.getDeviceId(), headers, HttpStatus.OK);
     }
 
     @PostMapping("/create")
