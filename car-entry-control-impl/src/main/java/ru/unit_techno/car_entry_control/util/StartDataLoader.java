@@ -27,8 +27,8 @@ public class StartDataLoader implements CommandLineRunner {
     private final RfidLabelRepository rfidLabelRepository;
 
     @Override
-    public void run(String... args) throws Exception {
-        /// TODO: 20.10.2021 Вынести в отдельный профиль!
+    @Profile("!test")
+    public void run(String... args) {
         repository.deleteAll();
         carRepository.deleteAll();
         rfidLabelRepository.deleteAll();
