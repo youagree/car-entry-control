@@ -41,7 +41,7 @@ public class RfidService {
 
     @Transactional
     public void createCardAndLinkRfid(CarCreateDto carCreateDto) {
-        validateGovernmentNumber(carCreateDto.getGovernmentNumber());
+        validateGovernmentNumberExistAndRegex(carCreateDto.getGovernmentNumber());
         Car car = carMapper.toDomain(carCreateDto);
         Car savedCar = carRepository.save(car);
 
@@ -134,7 +134,7 @@ public class RfidService {
 
     private void updateRfid(RfidLabel existRfid, EditRfidLabelRequest editRequest) {
         if (!StringUtils.isEmpty(editRequest.getGovernmentNumber())) {
-            validateGovernmentNumber(editRequest.getGovernmentNumber());
+            validateGovernmentNumberRegex(editRequest.getGovernmentNumber());
             existRfid.getCar().setGovernmentNumber(editRequest.getGovernmentNumber());
         }
         if (!StringUtils.isEmpty(editRequest.getCarColor())) {
@@ -145,13 +145,19 @@ public class RfidService {
         }
     }
 
-    public void validateGovernmentNumber(String governmentNumber) {
+    public void validateGovernmentNumberExistAndRegex(String governmentNumber) {
         if (!governmentNumber.matches(Constant.REGEX)) {
             throw new IllegalArgumentException("Invalid government number: " + governmentNumber + ". Please try again!");
         }
 
         if (carRepository.findCarByGovernmentNumber(governmentNumber).isPresent()) {
             throw new EntityExistsException("This government number " + governmentNumber + " is already exist! Please try again!");
+        }
+    }
+
+    public void validateGovernmentNumberRegex(String governmentNumber) {
+        if (!governmentNumber.matches(Constant.REGEX)) {
+            throw new IllegalArgumentException("Invalid government number: " + governmentNumber + ". Please try again!");
         }
     }
 }
