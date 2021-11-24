@@ -51,6 +51,7 @@ public class EventService {
         Long barrierId = 0L;
         Long longRfidLabel = rfidLabel.getRfid();
         log.info("rfid id is: {}", longRfidLabel);
+
         /// TODO: 21.10.2021 Разобраться как в этот объект передать гос номер для логирования эвернта в случае успешного поиска рфид метки, но она не активна
         RfidLabel rfid = new RfidLabel().setCar(new Car().setGovernmentNumber(null)).setRfidLabelValue(longRfidLabel);
         Optional<RfidLabel> label = rfidLabelRepository.findByRfidLabelValue(longRfidLabel);
