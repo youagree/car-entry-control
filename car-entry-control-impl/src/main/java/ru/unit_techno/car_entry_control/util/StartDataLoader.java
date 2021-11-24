@@ -27,7 +27,6 @@ public class StartDataLoader implements CommandLineRunner {
     private final RfidLabelRepository rfidLabelRepository;
 
     @Override
-    @Profile("!test")
     public void run(String... args) {
         repository.deleteAll();
         carRepository.deleteAll();
