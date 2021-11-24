@@ -1,7 +1,10 @@
 
 package ru.unit_techno.car_entry_control.service;
 
+import static ru.unit_techno.car_entry_control.util.Utils.bind;
+
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +29,6 @@ import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
-
-import static ru.unit_techno.car_entry_control.util.Utils.bind;
 
 @Service
 @RequiredArgsConstructor
@@ -132,14 +133,14 @@ public class RfidService {
     }
 
     private void updateRfid(RfidLabel existRfid, EditRfidLabelRequest editRequest) {
-        if (!editRequest.getGovernmentNumber().isEmpty()) {
+        if (!StringUtils.isEmpty(editRequest.getGovernmentNumber())) {
             validateGovernmentNumber(editRequest.getGovernmentNumber());
             existRfid.getCar().setGovernmentNumber(editRequest.getGovernmentNumber());
         }
-        if (!editRequest.getCarColor().isEmpty()) {
+        if (!StringUtils.isEmpty(editRequest.getCarColor())) {
             existRfid.getCar().setCarColor(editRequest.getCarColor());
         }
-        if (!editRequest.getCarModel().isEmpty()) {
+        if (!StringUtils.isEmpty(editRequest.getCarModel())) {
             existRfid.getCar().setCarModel(editRequest.getCarModel());
         }
     }
