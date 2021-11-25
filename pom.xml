@@ -28,6 +28,10 @@
 		<springfox-swagger2>2.9.2</springfox-swagger2>
 		<test.container.version>1.16.0</test.container.version>
 
+		<device-registration-api.version>1.0-SNAPSHOT</device-registration-api.version>
+		<ariss-barrier-api.version>1.0-SNAPSHOT</ariss-barrier-api.version>
+		<ariss-log-action.version>1.0-SNAPSHOT</ariss-log-action.version>
+
 		<build.number>1</build.number>
 	</properties>
 
@@ -37,7 +41,7 @@
 			<dependency>
 				<groupId>ru.unit_techno.car_entry_control</groupId>
 				<artifactId>car-entry-control-db</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<!--ariss-->
@@ -55,22 +59,22 @@
 			<dependency>
 				<groupId>ru.unit.techno.device.registration.service</groupId>
 				<artifactId>device-registration-api</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>${device-registration-api.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>ru.unit.techno.ariss.barrier</groupId>
 				<artifactId>ariss-barrier-api</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>${ariss-barrier-api.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>ru.unit.techno</groupId>
 				<artifactId>ariss-log-action</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>${ariss-log-action.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>ru.unit.techno</groupId>
 				<artifactId>ariss-log-action-db</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>${ariss-log-action.version}</version>
 			</dependency>
 
 			<dependency>

@@ -64,34 +64,6 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="2021-01-17-create-sequence-squd_entry_device_id_seq" author="ESV">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <sequenceExists sequenceName="squd_entry_device_id_seq"/>
-            </not>
-        </preConditions>
-        <createSequence sequenceName="squd_entry_device_id_seq" incrementBy="50"/>
-    </changeSet>
-
-    <changeSet id="2021-01-17-create-table-entry_devices" author="ESV">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="entry_devices"/>
-            </not>
-        </preConditions>
-
-        <!-- ТАБЛИЦА ENTRY_DEVICES -->
-        <createTable tableName="entry_devices">
-            <column name="entry_device_id" type="BIGINT" valueSequenceNext="">
-                <constraints nullable="false" primaryKey="true"/>
-            </column>
-            <column name="entry_device_slug" type="varchar">
-                <constraints nullable="false"/>
-            </column>
-            <column name="entry_device_direction" type="varchar"/>
-        </createTable>
-    </changeSet>
-
     <!-- Foreign keys & indexes -->
     <changeSet author="ESV" id="cars-createIndex">
         <createIndex indexName="idx_rfid_label_id_to_cars" tableName="rfid_labels">
