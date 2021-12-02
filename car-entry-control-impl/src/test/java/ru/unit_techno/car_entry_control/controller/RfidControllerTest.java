@@ -153,7 +153,7 @@ public class RfidControllerTest extends BaseTestClass {
                 .setCarModel("BMW")
                 .setCarColor("WHITE")
                 //попытка привязать к машине с неверным номером
-                .setGovernmentNumber("З123БС 99");
+                .setGovernmentNumber("З123БС99");
 
         testUtils.invokePostApi(Void.class, url, HttpStatus.BAD_REQUEST, carCreateDto);
     }
@@ -180,17 +180,17 @@ public class RfidControllerTest extends BaseTestClass {
                 .setCar(null));
 
         Car save2 = carRepository.save(new Car()
-                .setGovernmentNumber("А777АА 77")
+                .setGovernmentNumber("А777АА77")
                 .setCarColor("RED")
                 .setCarModel("ZHIGULL"));
 
         Car save1 = carRepository.save(new Car()
-                .setGovernmentNumber("А222АА 77")
+                .setGovernmentNumber("А222АА77")
                 .setCarColor("BLUE")
                 .setCarModel("ZHIGULL"));
 
         Car save = carRepository.save(new Car()
-                .setGovernmentNumber("А111АА 77")
+                .setGovernmentNumber("А111АА77")
                 .setCarColor("BAKLAJAN")
                 .setCarModel("ZHIGULL"));
 
@@ -204,7 +204,7 @@ public class RfidControllerTest extends BaseTestClass {
         }, url, HttpStatus.OK);
 
         CardsWithRfidLabelsDto assertDto = new CardsWithRfidLabelsDto()
-                .setGovernmentNumber("А111АА 77")
+                .setGovernmentNumber("А111АА77")
                 .setRfidLabelValue(111444L)
                 .setCarColor("BAKLAJAN")
                 .setCarModel("ZHIGULL");
