@@ -87,9 +87,10 @@ public class RfidController {
     //todo покрыть тестом
     @GetMapping("/allRfidsWithCars")
     public Page<CardsWithRfidLabelsDto> findAllRfidsWithCard(
-            @JoinFetch(paths = "car", alias = "c")
+            @JoinFetch(paths = "car", alias = "car")
             @And({@Spec(path = "rfidLabelValue", params = "rfidLabelValue", spec = Equal.class),
-                    @Spec(path = "c.governmentNumber", params = "governmentNumber", spec = Equal.class),
+                    @Spec(path = "car.governmentNumber", params = "governmentNumber", spec = Equal.class),
+                    @Spec(path = "car.carModel", params = "carModel", spec = Equal.class),
                     @Spec(path = "state", params = "state", paramSeparator = ',', spec = In.class)
             }) Specification<RfidLabel> specificationPageable, Pageable pageable) {
         return rfidService.getAllRfidsWithCars(pageable, specificationPageable);
