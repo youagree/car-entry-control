@@ -113,7 +113,7 @@ public class RfidService {
         Page<RfidLabel> allRfidsWithCars = rfidLabelRepository.findAll(specification, pageable);
         return new PageImpl<>(allRfidsWithCars.stream()
                 .map(rfidMapper::toDtoWithCars)
-                .collect(Collectors.toList()), pageable, allRfidsWithCars.getTotalPages());
+                .collect(Collectors.toList()), pageable, allRfidsWithCars.getTotalElements());
     }
 
     public Page<RfidLabelDto> getAllNewRfidsWithPaging(Pageable pageable, StateEnum state) {
