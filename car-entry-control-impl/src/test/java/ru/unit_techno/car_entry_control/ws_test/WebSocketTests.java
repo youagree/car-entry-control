@@ -1,13 +1,7 @@
 package ru.unit_techno.car_entry_control.ws_test;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -27,6 +21,9 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static ru.unit_techno.car_entry_control.util.Constant.RFID_UNKNOWN_EXCEPTION_MESSAGE;
 
 public class WebSocketTests extends BaseTestClass {
 
@@ -58,12 +55,12 @@ public class WebSocketTests extends BaseTestClass {
                 .get(1, SECONDS);
         session.subscribe("/topic/newrfidlabel", new DefaultStompFrameHandler());
 
-        notificationService.sendNotActive(1234L);
+        notificationService.sendNotActive(1234L, RFID_UNKNOWN_EXCEPTION_MESSAGE);
 
         String receivedMessage = blockingQueue.poll(1, SECONDS);
         NewRfidLabelMessage result = objectMapper.readValue(receivedMessage, NewRfidLabelMessage.class);
         Assertions.assertEquals(result.getRfidLabelValue(), 1234L);
-        Assertions.assertEquals(result.getMessage(), "Активируйте новую метку");
+        Assertions.assertEquals(result.getMessage(), "Произошла неизвестная ошибка");
     }
 
     @SneakyThrows
@@ -76,13 +73,13 @@ public class WebSocketTests extends BaseTestClass {
                 .get(3, SECONDS);
         session.subscribe("/topic/newrfidlabel", new DefaultStompFrameHandler());
 
-        notificationService.sendActiveButSomethingUnavailable("1234", 1234L);
+        notificationService.sendActiveButSomethingUnavailable("1234", 1234L, RFID_UNKNOWN_EXCEPTION_MESSAGE);
 
         String receivedMessage = blockingQueue.poll(3, SECONDS);
         BarrierUnavailable result = objectMapper.readValue(receivedMessage, BarrierUnavailable.class);
         Assertions.assertEquals(result.getBarrierName(), "1234");
         Assertions.assertEquals(result.getDeviceId(), 1234L);
-        Assertions.assertEquals(result.getNotificationMessage(), "Вспомогательный сервис является недоступным в данный момент");
+        Assertions.assertEquals(result.getNotificationMessage(), "Произошла неизвестная ошибка");
     }
 
     class DefaultStompFrameHandler implements StompFrameHandler {

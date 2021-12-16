@@ -16,6 +16,8 @@ import ru.unit.techno.ariss.log.action.lib.model.MetaObject;
 import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 
+import static ru.unit_techno.car_entry_control.util.Constant.RFID_UNKNOWN_EXCEPTION_MESSAGE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -38,7 +40,7 @@ public class BarrierFeignService {
                     ActionStatus.ACTIVE);
         } catch (FeignException e) {
             MetaObject metaObject = eventConfig.getType().get(barrierRequestDto.getBarrierId());
-            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierRequestDto.getBarrierId());
+            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierRequestDto.getBarrierId(), RFID_UNKNOWN_EXCEPTION_MESSAGE);
             log.error("Service not available", e);
             actionCatchService.catchActionWhenFeignException(entry, rfidLabel, ActionStatus.ACTIVE, e);
         }
