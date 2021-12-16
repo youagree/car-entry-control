@@ -16,22 +16,22 @@ public class WSNotificationService {
     @Value("${ws.topics.not_active}")
     private String notActiveTopic;
 
-    public void sendNotActive(Long rfidLabelValue) {
+    public void sendNotActive(Long rfidLabelValue, String notificationMessage) {
         brokerMessagingTemplate.convertAndSend(
                 notActiveTopic,
                 new NewRfidLabelMessage()
-                        .setMessage("Активируйте новую метку")
+                        .setMessage(notificationMessage)
                         .setRfidLabelValue(rfidLabelValue)
         );
     }
 
-    public void sendActiveButSomethingUnavailable(String deviceMetaInfo, Long deviceId) {
+    public void sendActiveButSomethingUnavailable(String deviceMetaInfo, Long deviceId, String notificationMessage) {
         brokerMessagingTemplate.convertAndSend(
                 notActiveTopic,
                 new BarrierUnavailable()
                         .setBarrierName(deviceMetaInfo)
                         .setDeviceId(deviceId)
-                        .setNotificationMessage("Вспомогательный сервис является недоступным в данный момент")
+                        .setNotificationMessage(notificationMessage)
         );
     }
 }
