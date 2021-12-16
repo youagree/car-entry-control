@@ -8,12 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.unit.techno.ariss.barrier.api.BarrierFeignClient;
 import ru.unit.techno.ariss.barrier.api.dto.BarrierRequestDto;
-import ru.unit.techno.ariss.barrier.api.dto.BarrierResponseDto;
-import ru.unit.techno.ariss.log.action.lib.api.LogActionBuilder;
 import ru.unit.techno.ariss.log.action.lib.config.DeviceEventConfig;
-import ru.unit.techno.ariss.log.action.lib.entity.Description;
 import ru.unit.techno.ariss.log.action.lib.model.ActionStatus;
 import ru.unit.techno.ariss.log.action.lib.model.MetaObject;
 import ru.unit.techno.device.registration.api.DeviceResource;
@@ -41,10 +37,10 @@ public class EventService {
     private final WSNotificationService notificationService;
     private final RfidLabelRepository rfidLabelRepository;
     private final DeviceResource deviceResource;
-    private final BarrierFeignClient barrierFeignClient;
     private final EntryDeviceToReqRespMapper reqRespMapper;
-    private final LogActionBuilder logActionBuilder;
     private final DeviceEventConfig eventConfig;
+    private final ActionCatchService actionCatchService;
+    private final BarrierFeignService barrierFeignService;
 
     @Transactional
     public void rfidLabelCheck(RfidEntry rfidLabel) {
@@ -52,7 +48,6 @@ public class EventService {
         Long longRfidLabel = rfidLabel.getRfid();
         log.info("rfid id is: {}", longRfidLabel);
 
-        /// TODO: 21.10.2021 Разобраться как в этот объект передать гос номер для логирования эвернта в случае успешного поиска рфид метки, но она не активна
         RfidLabel rfid = new RfidLabel().setCar(new Car().setGovernmentNumber(null)).setRfidLabelValue(longRfidLabel);
         Optional<RfidLabel> label = rfidLabelRepository.findByRfidLabelValue(longRfidLabel);
         try {
@@ -66,36 +61,31 @@ public class EventService {
             barrierRequest.setGovernmentNumber(rfid.getCar().getGovernmentNumber());
 
             log.debug("SEND REQUEST TO ARISS BARRIER MODULE, REQUEST BODY: {}", barrierRequest);
-            BarrierResponseDto barrierResponse = barrierFeignClient.openBarrier(barrierRequest);
+            barrierFeignService.openBarrier(barrierRequest, rfid, rfidLabel);
 
             //TODO сделать проверку пришедшего статуса!
-            log.debug("ARISS BARRIER MODULE RESPONSE: {}", barrierResponse);
             log.debug("finish validate rfid, start open entry device");
-            logActionBuilder.buildActionObjectAndLogAction(rfidLabel.getDeviceId(),
-                    rfidLabel.getRfid(),
-                    rfid.getCar().getGovernmentNumber(),
-                    ActionStatus.ACTIVE);
         } catch (EntityNotFoundException e) {
             log.error("unknown barrier", e);
             MetaObject metaObject = eventConfig.getType().get(barrierId);
             notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierId);
-            catchAction(rfidLabel, rfid, ActionStatus.UNKNOWN, e);
+            actionCatchService.catchAction(rfidLabel, rfid, ActionStatus.UNKNOWN, e);
         } catch (RfidAccessDeniedException e) {
             // TODO: 03.08.2021 написать тест и проверить то заполняется гос номер
             MetaObject metaObject = eventConfig.getType().get(barrierId);
             notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierId);
             log.error("unknown barrier", e);
-            catchAction(rfidLabel, rfid, ActionStatus.NO_ACTIVE, e);
+            actionCatchService.catchAction(rfidLabel, rfid, ActionStatus.NO_ACTIVE, e);
         } catch (FeignException e) {
             MetaObject metaObject = eventConfig.getType().get(barrierId);
             notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierId);
             log.error("Service not available", e);
-            catchActionWhenFeignException(rfidLabel, rfid, ActionStatus.ACTIVE, e);
+            actionCatchService.catchActionWhenFeignException(rfidLabel, rfid, ActionStatus.ACTIVE, e);
         } catch (Exception e) {
             MetaObject metaObject = eventConfig.getType().get(barrierId);
             notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierId);
             log.error("exception when try to open barrier", e);
-            catchAction(rfidLabel, rfid, ActionStatus.UNKNOWN, e);
+            actionCatchService.catchAction(rfidLabel, rfid, ActionStatus.UNKNOWN, e);
         }
     }
 
@@ -137,34 +127,5 @@ public class EventService {
         }
 
         return rfidLabel.get();
-    }
-
-    private void catchAction(RfidEntry rfidLabel,
-                             RfidLabel rfid,
-                             ActionStatus actionStatus,
-                             Exception e) {
-        logActionBuilder.buildActionObjectAndLogAction(
-                rfidLabel.getDeviceId(),
-                rfidLabel.getRfid(),
-                rfid.getCar().getGovernmentNumber(),
-                actionStatus,
-                true,
-                new Description()
-                        .setStatusCode("500")
-                        .setMessage(e.getMessage()));
-    }
-
-    private void catchActionWhenFeignException(RfidEntry rfidLabel,
-                                               RfidLabel rfid,
-                                               ActionStatus actionStatus,
-                                               FeignException e) {
-        logActionBuilder.buildActionObjectAndLogAction(
-                rfidLabel.getDeviceId(),
-                rfidLabel.getRfid(),
-                rfid.getCar().getGovernmentNumber(),
-                actionStatus,
-                true,
-                new Description().setStatusCode(String.valueOf(e.status()))
-                        .setMessage(e.getMessage()).setErroredServiceName(e.request().url()));
     }
 }

@@ -12,16 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.unit_techno.car_entry_control.dto.CarCreateDto;
 import ru.unit_techno.car_entry_control.dto.CardsWithRfidLabelsDto;
 import ru.unit_techno.car_entry_control.dto.RfidLabelDto;
@@ -84,7 +75,7 @@ public class RfidController {
         return rfidService.getAllNewRfidsWithPaging(pageable, state);
     }
 
-    //todo покрыть тестом
+    //todo покрыть тестом ?governmentNumber='AA77A77'
     @GetMapping("/allRfidsWithCars")
     public Page<CardsWithRfidLabelsDto> findAllRfidsWithCard(
             @JoinFetch(paths = "car", alias = "car", distinct = false)
