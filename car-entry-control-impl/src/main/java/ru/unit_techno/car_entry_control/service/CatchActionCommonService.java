@@ -1,5 +1,9 @@
 package ru.unit_techno.car_entry_control.service;
 
+import static ru.unit_techno.car_entry_control.util.Constant.RFID_NOT_ACTIVE_MESSAGE;
+import static ru.unit_techno.car_entry_control.util.Constant.RFID_NOT_FOUND_MESSAGE;
+import static ru.unit_techno.car_entry_control.util.Constant.RFID_UNKNOWN_EXCEPTION_MESSAGE;
+
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +20,6 @@ import ru.unit_techno.car_entry_control.exception.custom.RfidAccessDeniedExcepti
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Optional;
-
-import static ru.unit_techno.car_entry_control.util.Constant.*;
 
 @Slf4j
 @Service
@@ -60,5 +62,17 @@ public class CatchActionCommonService {
         notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), rfidLabel.getDeviceId(), RFID_UNKNOWN_EXCEPTION_MESSAGE);
         log.error("Service not available", e);
         actionCatchService.catchActionWhenFeignException(rfidLabel, label.get(), ActionStatus.ACTIVE, e);
+    }
+
+    @Transactional(value = Transactional.TxType.REQUIRES_NEW)
+    public void catchAndSaveUnknownException(RfidEntry rfidLabel, Optional<RfidLabel> label, Exception e) {
+        MetaObject metaObject = eventConfig.getType().get(rfidLabel.getDeviceId());
+        notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), rfidLabel.getDeviceId(), RFID_UNKNOWN_EXCEPTION_MESSAGE);
+        log.error("exception when try to open barrier", e);
+        actionCatchService.catchAction(rfidLabel, label.get(), ActionStatus.UNKNOWN, e);
+    }
+
+    public void catchWhenRfidNotActive(Optional<RfidLabel> rfidLabel) {
+        notificationService.sendNotActive(rfidLabel.get().getRfidLabelValue(), RFID_NOT_ACTIVE_MESSAGE);
     }
 }

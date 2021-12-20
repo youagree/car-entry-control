@@ -188,6 +188,7 @@ public class EventControllerTest extends BaseTestClass {
         Assertions.assertEquals(description.getMessage(), "Barrier exception");
         Assertions.assertEquals(description.getStatusCode(), "500");
         Assertions.assertEquals(description.getErroredServiceName(), "https://ariss.lifo.ru/barrier");
+        eventRepository.findAll();
     }
 
     @Test
@@ -277,5 +278,8 @@ public class EventControllerTest extends BaseTestClass {
         MatcherAssert.assertThat(event, AllFieldsNotNullRecursive.allFieldsNotNullRecursive(
                 "Event.gosNumber",
                 "Description.erroredServiceName"));
+                .setDeviceId(7665L));
+
+        List<Event> all = eventRepository.findAll();
     }
 }
