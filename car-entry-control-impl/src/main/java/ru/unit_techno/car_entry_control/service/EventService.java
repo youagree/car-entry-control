@@ -1,10 +1,6 @@
 package ru.unit_techno.car_entry_control.service;
 
 
-import static ru.unit_techno.car_entry_control.util.Constant.RFID_NOT_ACTIVE_MESSAGE;
-import static ru.unit_techno.car_entry_control.util.Constant.RFID_NOT_FOUND_MESSAGE;
-import static ru.unit_techno.car_entry_control.util.Constant.RFID_UNKNOWN_EXCEPTION_MESSAGE;
-
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -13,14 +9,11 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.unit.techno.ariss.barrier.api.dto.BarrierRequestDto;
-import ru.unit.techno.ariss.log.action.lib.config.DeviceEventConfig;
 import ru.unit.techno.ariss.log.action.lib.model.ActionStatus;
-import ru.unit.techno.ariss.log.action.lib.model.MetaObject;
 import ru.unit.techno.device.registration.api.DeviceResource;
 import ru.unit.techno.device.registration.api.dto.DeviceResponseDto;
 import ru.unit.techno.device.registration.api.enums.DeviceType;
 import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
-import ru.unit_techno.car_entry_control.entity.Car;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.exception.custom.RfidAccessDeniedException;
@@ -38,13 +31,11 @@ import java.util.Random;
 @EnableAspectJAutoProxy
 public class EventService {
 
-    private final WSNotificationService notificationService;
     private final RfidLabelRepository rfidLabelRepository;
     private final DeviceResource deviceResource;
     private final EntryDeviceToReqRespMapper reqRespMapper;
-    private final DeviceEventConfig eventConfig;
-    private final ActionCatchService actionCatchService;
     private final BarrierFeignService barrierFeignService;
+    private final CatchActionCommonService catchAction;
 
     @Transactional
     public void rfidLabelCheck(RfidEntry rfidLabel) {
@@ -66,27 +57,14 @@ public class EventService {
 
             log.debug("finish validate rfid, start open entry device");
         } catch (EntityNotFoundException e) {
-            log.error("unknown rfid label", e);
-            MetaObject metaObject = eventConfig.getType().get(rfidLabel.getDeviceId());
-            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), rfidLabel.getDeviceId(), RFID_NOT_FOUND_MESSAGE);
-            actionCatchService.catchAction(rfidLabel, new RfidLabel()
-                            .setCar(new Car()
-                                    .setGovernmentNumber(null))
-                            .setRfidLabelValue(longRfidLabel),
-                    ActionStatus.UNKNOWN, e);
+            catchAction.rfidNotFoundCatchAndSaveAction(rfidLabel, longRfidLabel, e);
+            throw (e);
         } catch (RfidAccessDeniedException e) {
-            log.error("rfid label not active", e);
-            actionCatchService.catchAction(rfidLabel, label.get(), ActionStatus.NO_ACTIVE, e);
+            catchAction.rfidAccessDeniedCatchAndSave(rfidLabel, label.get(), ActionStatus.NO_ACTIVE, e);
+            throw (e);
         } catch (FeignException e) {
-            MetaObject metaObject = eventConfig.getType().get(rfidLabel.getDeviceId());
-            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), rfidLabel.getDeviceId(), RFID_UNKNOWN_EXCEPTION_MESSAGE);
-            log.error("Service not available", e);
-            actionCatchService.catchActionWhenFeignException(rfidLabel, label.get(), ActionStatus.ACTIVE, e);
-        } catch (Exception e) {
-            MetaObject metaObject = eventConfig.getType().get(rfidLabel.getDeviceId());
-            notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), rfidLabel.getDeviceId(), RFID_UNKNOWN_EXCEPTION_MESSAGE);
-            log.error("exception when try to open barrier", e);
-            actionCatchService.catchAction(rfidLabel, label.get(), ActionStatus.UNKNOWN, e);
+            catchAction.feignExceptionCheckAndSave(rfidLabel, label, e);
+            throw (e);
         }
     }
 
@@ -122,10 +100,8 @@ public class EventService {
         if (rfidLabel.get().getState().equals(StateEnum.NO_ACTIVE) ||
                 rfidLabel.get().getState().equals(StateEnum.NEW)) {
             log.info("rfidLabel is not active");
-            notificationService.sendNotActive(rfidLabel.get().getRfidLabelValue(), RFID_NOT_ACTIVE_MESSAGE);
             throw new RfidAccessDeniedException("this rfid label is not active");
         }
-
         return rfidLabel.get();
     }
 }

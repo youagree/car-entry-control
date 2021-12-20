@@ -65,7 +65,7 @@ public class BaseTestClass {
     }
 
     @AfterEach
-    private void end() {
+    public void end() {
         rfidLabelRepository.deleteAll();
         carRepository.deleteAll();
         eventRepository.deleteAll();

@@ -1,7 +1,14 @@
 package ru.unit_techno.car_entry_control.ws_test;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static ru.unit_techno.car_entry_control.util.Constant.RFID_UNKNOWN_EXCEPTION_MESSAGE;
+
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -21,9 +28,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static ru.unit_techno.car_entry_control.util.Constant.RFID_UNKNOWN_EXCEPTION_MESSAGE;
 
 public class WebSocketTests extends BaseTestClass {
 
@@ -57,7 +61,7 @@ public class WebSocketTests extends BaseTestClass {
 
         notificationService.sendNotActive(1234L, RFID_UNKNOWN_EXCEPTION_MESSAGE);
 
-        String receivedMessage = blockingQueue.poll(1, SECONDS);
+        String receivedMessage = blockingQueue.poll(10, SECONDS);
         NewRfidLabelMessage result = objectMapper.readValue(receivedMessage, NewRfidLabelMessage.class);
         Assertions.assertEquals(result.getRfidLabelValue(), 1234L);
         Assertions.assertEquals(result.getMessage(), "Произошла неизвестная ошибка");
@@ -75,7 +79,7 @@ public class WebSocketTests extends BaseTestClass {
 
         notificationService.sendActiveButSomethingUnavailable("1234", 1234L, RFID_UNKNOWN_EXCEPTION_MESSAGE);
 
-        String receivedMessage = blockingQueue.poll(3, SECONDS);
+        String receivedMessage = blockingQueue.poll(10, SECONDS);
         BarrierUnavailable result = objectMapper.readValue(receivedMessage, BarrierUnavailable.class);
         Assertions.assertEquals(result.getBarrierName(), "1234");
         Assertions.assertEquals(result.getDeviceId(), 1234L);

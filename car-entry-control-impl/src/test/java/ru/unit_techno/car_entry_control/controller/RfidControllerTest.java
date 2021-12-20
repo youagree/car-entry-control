@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import ru.unit_techno.car_entry_control.dto.CarCreateDto;
 import ru.unit_techno.car_entry_control.dto.CardsWithRfidLabelsDto;
 import ru.unit_techno.car_entry_control.dto.RfidLabelDto;
+import ru.unit_techno.car_entry_control.dto.request.EditRfidLabelRequest;
 import ru.unit_techno.car_entry_control.entity.Car;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
@@ -273,5 +274,95 @@ public class RfidControllerTest extends BaseTestClass {
 
         Optional<RfidLabel> rfidLabel = rfidLabelRepository.findByRfidLabelValue(rfidLabelValue);
         Assertions.assertEquals(rfidLabel.get().getState(), StateEnum.ACTIVE);
+    }
+
+    @Test
+    @DisplayName("Тест на успешное редактирование рфид метки и машины, которая ей пренадлежит")
+    public void editRfidTest() {
+        Car car = carRepository.saveAndFlush(
+                new Car()
+                        .setCarColor("RED")
+                        .setGovernmentNumber("А777АА77")
+                        .setCarModel("LADA")
+        );
+
+        rfidLabelRepository.saveAndFlush(
+                new RfidLabel()
+                        .setRfidLabelValue(124L)
+                        .setState(StateEnum.ACTIVE)
+                        .setCar(car)
+        );
+
+        String url = BASE_URL + "/edit";
+
+        EditRfidLabelRequest request = new EditRfidLabelRequest()
+                .setRfidValue(124L)
+                .setCarColor("GREEN")
+                .setCarModel("KAMAZ")
+                .setGovernmentNumber("А666АА66");
+
+        testUtils.invokePostApi(Void.class, url, HttpStatus.OK, request);
+
+        RfidLabel editedRfid = rfidLabelRepository.findByRfidLabelValue(124L).get();
+
+        Car editedRfidCar = editedRfid.getCar();
+        Assertions.assertEquals(editedRfidCar.getGovernmentNumber(), "А666АА66");
+        Assertions.assertEquals(editedRfidCar.getCarColor(), "GREEN");
+        Assertions.assertEquals(editedRfidCar.getCarModel(), "KAMAZ");
+    }
+
+    @Test
+    @DisplayName("Тест на успешное обнуление метки")
+    public void resetRfid() {
+        Car car = carRepository.saveAndFlush(
+                new Car()
+                        .setCarColor("RED")
+                        .setGovernmentNumber("А777АА77")
+                        .setCarModel("LADA")
+        );
+
+        rfidLabelRepository.saveAndFlush(
+                new RfidLabel()
+                        .setRfidLabelValue(124L)
+                        .setState(StateEnum.ACTIVE)
+                        .setCar(car)
+        );
+
+        String url = BASE_URL + "/resetRfid/124";
+
+        testUtils.invokePutApi(Void.class, url, HttpStatus.OK, null);
+
+        RfidLabel editedRfid = rfidLabelRepository.findByRfidLabelValue(124L).get();
+
+        Car editedRfidCar = editedRfid.getCar();
+        Assertions.assertEquals(editedRfid.getState(), StateEnum.NEW);
+        Assertions.assertNull(editedRfidCar);
+    }
+
+    @Test
+    @DisplayName("Тест на успешное удаление метки")
+    public void deleteRfidTest() {
+        Car car = carRepository.saveAndFlush(
+                new Car()
+                        .setCarColor("RED")
+                        .setGovernmentNumber("А777АА77")
+                        .setCarModel("LADA")
+        );
+
+        rfidLabelRepository.saveAndFlush(
+                new RfidLabel()
+                        .setRfidLabelValue(124L)
+                        .setState(StateEnum.NEW)
+                        .setCar(car)
+        );
+
+        String url = BASE_URL + "/deleteRfid/124";
+
+        testUtils.invokeDeleteApi(Void.class, url, HttpStatus.OK, null);
+
+        Optional<RfidLabel> byRfidLabelValue = rfidLabelRepository.findByRfidLabelValue(124L);
+        Assertions.assertTrue(byRfidLabelValue.isEmpty());
+        Optional<Car> carDeleted = carRepository.findCarByGovernmentNumber("А777АА77");
+        Assertions.assertFalse(carDeleted.isEmpty());
     }
 }
