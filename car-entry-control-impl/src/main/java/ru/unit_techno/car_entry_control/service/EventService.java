@@ -71,8 +71,6 @@ public class EventService {
         } catch (FeignException e) {
             catchAction.feignExceptionCheckAndSave(rfidLabel, label, e);
             throw (e);
-        } catch (Exception e) {
-            catchAction.catchAndSaveUnknownException(rfidLabel, label, e);
         }
     }
 
@@ -138,7 +136,6 @@ public class EventService {
         if (rfidLabel.get().getState().equals(StateEnum.NO_ACTIVE) ||
                 rfidLabel.get().getState().equals(StateEnum.NEW)) {
             log.info("rfidLabel is not active");
-            catchAction.catchWhenRfidNotActive(rfidLabel);
             throw new RfidAccessDeniedException("this rfid label is not active");
         }
     }
