@@ -130,7 +130,7 @@ public class EventControllerTest extends BaseTestClass {
                         .setCar(car)
         );
 
-        Mockito.when(barrierFeignClient.openBarrier(any())).thenThrow(new FeignExceptionChild(500, "Barrier exception",
+        Mockito.when(deviceResource.getGroupDevices(any(), any())).thenThrow(new FeignExceptionChild(500, "Barrier exception",
                 Request.create(Request.HttpMethod.POST, "https://ariss.lifo.ru/barrier", Map.of(), null, null, null)));
 
         testUtils.invokePostApi(Void.class, EVENT, HttpStatus.INTERNAL_SERVER_ERROR, new RfidEntry()
@@ -185,11 +185,11 @@ public class EventControllerTest extends BaseTestClass {
         Assertions.assertEquals(recordedError.getCommonId(), 124L);
         Assertions.assertEquals(recordedError.getGosNumber(), "А777АА77");
         Assertions.assertEquals(recordedError.getEventType(), "ВЫЕЗД");
+        Assertions.assertEquals(recordedError.getEventType(), "НЕИЗВЕСТНО");
         Description description = recordedError.getDescription();
         Assertions.assertEquals(description.getMessage(), "Barrier exception");
         Assertions.assertEquals(description.getStatusCode(), "500");
         Assertions.assertEquals(description.getErroredServiceName(), "https://ariss.lifo.ru/barrier");
-        eventRepository.findAll();
     }
 
     @Test
