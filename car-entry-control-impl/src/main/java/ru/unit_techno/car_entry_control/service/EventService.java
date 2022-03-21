@@ -96,8 +96,9 @@ public class EventService {
                     .build()
                     .send(request, HttpResponse.BodyHandlers.ofString())
                     .body();
-            log.info("response is {}", response);
+            log.info("success get new rfid from core {}", response);
         } catch (Exception e) {
+            log.info("response is {}", response);
             throw new RfidScannerTimeoutException("service is not working now");
         }
 
