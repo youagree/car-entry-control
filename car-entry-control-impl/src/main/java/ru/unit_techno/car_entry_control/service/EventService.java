@@ -17,11 +17,17 @@ import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
 import ru.unit_techno.car_entry_control.entity.enums.StateEnum;
 import ru.unit_techno.car_entry_control.exception.custom.RfidAccessDeniedException;
+import ru.unit_techno.car_entry_control.exception.custom.RfidScannerTimeoutException;
 import ru.unit_techno.car_entry_control.mapper.EntryDeviceToReqRespMapper;
 import ru.unit_techno.car_entry_control.repository.RfidLabelRepository;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.Random;
 
@@ -69,14 +75,33 @@ public class EventService {
     }
 
     @Transactional
+    @SneakyThrows
     public void create() {
         log.info("start create new rfid label");
 
         /// TODO: 19.10.2021 ПОТОМ ЗАПРАШИВАТЬ ИДЕНТИФИКАТОР РФИД МЕТКИ С ПРОШИВКИ
         Long onFirmware = new Random().nextLong();
-        Optional<RfidLabel> foundedRfidLabel = rfidLabelRepository.findByRfidLabelValue(onFirmware);
+
+        var request = HttpRequest.newBuilder()
+                .GET()
+                // TODO get device id from device reg core
+                .uri(new URI("http://localhost:9876/api/squd-core/rfid/create/20078"))
+                .build();
+
+        var response = "";
+        try {
+            response = HttpClient
+                    .newBuilder()
+                    .connectTimeout(Duration.ofSeconds(15))
+                    .build()
+                    .send(request, HttpResponse.BodyHandlers.ofString())
+                    .body();
+        } catch (Exception e) {
+            throw new RfidScannerTimeoutException("service is not working now");
+        }
 
         /// TODO: 09.11.2021 Докинуть эксепшены для ситуаций когда считыватель отъебнул и когда прошел таймаут
+        Optional<RfidLabel> foundedRfidLabel = rfidLabelRepository.findByRfidLabelValue(Long.parseLong(response));
 
         if (foundedRfidLabel.isEmpty()) {
             RfidLabel newRfidLabel = new RfidLabel()
