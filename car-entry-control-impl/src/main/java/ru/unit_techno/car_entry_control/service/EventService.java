@@ -85,7 +85,7 @@ public class EventService {
         var request = HttpRequest.newBuilder()
                 .GET()
                 // TODO get device id from device reg core
-                .uri(new URI("http://localhost:9876/api/squd-core/rfid/create/20078"))
+                .uri(new URI("http://localhost:9876/api/squd-core/rfid/create/200078"))
                 .build();
 
         var response = "";
@@ -96,6 +96,7 @@ public class EventService {
                     .build()
                     .send(request, HttpResponse.BodyHandlers.ofString())
                     .body();
+            log.info("response is {}", response);
         } catch (Exception e) {
             throw new RfidScannerTimeoutException("service is not working now");
         }
