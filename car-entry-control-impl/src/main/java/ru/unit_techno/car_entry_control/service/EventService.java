@@ -27,9 +27,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.util.Optional;
-import java.util.Random;
 
 @Slf4j
 @Service
@@ -80,7 +80,6 @@ public class EventService {
         log.info("start create new rfid label");
 
         /// TODO: 19.10.2021 ПОТОМ ЗАПРАШИВАТЬ ИДЕНТИФИКАТОР РФИД МЕТКИ С ПРОШИВКИ
-        Long onFirmware = new Random().nextLong();
 
         var request = HttpRequest.newBuilder()
                 .GET()
@@ -88,27 +87,35 @@ public class EventService {
                 .uri(new URI("http://localhost:9876/api/squd-core/rfid/create/200078"))
                 .build();
 
-        var response = "";
+        HttpResponse<String> response = null;
         try {
             response = HttpClient
                     .newBuilder()
                     .connectTimeout(Duration.ofSeconds(15))
                     .build()
-                    .send(request, HttpResponse.BodyHandlers.ofString())
-                    .body();
+                    .send(request, HttpResponse.BodyHandlers.ofString());
+
             log.info("success get new rfid from core {}", response);
         } catch (Exception e) {
             log.info("response is {}", response);
             throw new RfidScannerTimeoutException("service is not working now");
         }
 
+        if (response.statusCode() == 408) {
+            throw new RfidScannerTimeoutException("service is not working now");
+        }
+
         /// TODO: 09.11.2021 Докинуть эксепшены для ситуаций когда считыватель отъебнул и когда прошел таймаут
-        Optional<RfidLabel> foundedRfidLabel = rfidLabelRepository.findByRfidLabelValue(Long.parseLong(response));
+        Optional<RfidLabel> foundedRfidLabel = rfidLabelRepository
+                .findByRfidLabelValue(Long.parseLong(response.body()));
 
         if (foundedRfidLabel.isEmpty()) {
             RfidLabel newRfidLabel = new RfidLabel()
-                    .setRfidLabelValue(onFirmware)
-                    .setState(StateEnum.NEW);
+                    .setRfidLabelValue(Long.parseLong(response.body()))
+                    .setState(StateEnum.NEW)
+                    .setCreationDate(new Timestamp(System.currentTimeMillis()));
+
+            //todo add timestamp
             rfidLabelRepository.save(newRfidLabel);
             log.info("successfully create new rfid label, {}, status is NEW, you need to activate this rfid", newRfidLabel);
             return;
