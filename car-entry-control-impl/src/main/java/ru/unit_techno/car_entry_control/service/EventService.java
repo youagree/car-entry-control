@@ -79,8 +79,6 @@ public class EventService {
     public void create() {
         log.info("start create new rfid label");
 
-        /// TODO: 19.10.2021 ПОТОМ ЗАПРАШИВАТЬ ИДЕНТИФИКАТОР РФИД МЕТКИ С ПРОШИВКИ
-
         var request = HttpRequest.newBuilder()
                 .GET()
                 // TODO get device id from device reg core
@@ -105,7 +103,6 @@ public class EventService {
             throw new RfidScannerTimeoutException("service is not working now");
         }
 
-        /// TODO: 09.11.2021 Докинуть эксепшены для ситуаций когда считыватель отъебнул и когда прошел таймаут
         Optional<RfidLabel> foundedRfidLabel = rfidLabelRepository
                 .findByRfidLabelValue(Long.parseLong(response.body()));
 
@@ -114,8 +111,7 @@ public class EventService {
                     .setRfidLabelValue(Long.parseLong(response.body()))
                     .setState(StateEnum.NEW)
                     .setCreationDate(new Timestamp(System.currentTimeMillis()));
-
-            //todo add timestamp
+            
             rfidLabelRepository.save(newRfidLabel);
             log.info("successfully create new rfid label, {}, status is NEW, you need to activate this rfid", newRfidLabel);
             return;
