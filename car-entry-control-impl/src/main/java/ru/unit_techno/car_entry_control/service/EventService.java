@@ -79,12 +79,13 @@ public class EventService {
     public void create() {
         log.info("start create new rfid label");
 
-        /// TODO: 19.10.2021 ПОТОМ ЗАПРАШИВАТЬ ИДЕНТИФИКАТОР РФИД МЕТКИ С ПРОШИВКИ
+        DeviceResponseDto entryDevice = deviceResource.getReaderDeviceId();
 
+        var url = "http://" + entryDevice.getEntryAddress() + "/api/squd-core/rfid/create/" + entryDevice.getDeviceId();
         var request = HttpRequest.newBuilder()
                 .GET()
                 // TODO get device id from device reg core
-                .uri(new URI("http://localhost:9876/api/squd-core/rfid/create/200078"))
+                .uri(new URI(url))
                 .build();
 
         HttpResponse<String> response = null;
