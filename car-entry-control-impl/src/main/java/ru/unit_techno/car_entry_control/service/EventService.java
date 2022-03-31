@@ -48,6 +48,7 @@ public class EventService {
         Long longRfidLabel = rfidLabel.getRfid();
         log.info("rfid id is: {}", longRfidLabel);
         Optional<RfidLabel> label = rfidLabelRepository.findByRfidLabelValue(longRfidLabel);
+        log.info("rfid is: {}", label.get());
         try {
             rfidExceptionCheck(label);
             RfidLabel existRfid = label.get();
@@ -125,8 +126,10 @@ public class EventService {
     }
 
     @SneakyThrows
-    private RfidLabel rfidExceptionCheck(Optional<RfidLabel> rfidLabel) {
+    @Transactional
+    public RfidLabel rfidExceptionCheck(Optional<RfidLabel> rfidLabel) {
         if (rfidLabel.isEmpty()) {
+            log.info("rdif label is {}", rfidLabel.get());
             log.info("rfidLabel is empty, not exist");
             //todo нотифекейшн попытка по неизвестной метке
             throw new EntityNotFoundException("this rfid label is not in the database");
