@@ -1,8 +1,6 @@
 
 package ru.unit_techno.car_entry_control.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-
 import feign.Request;
 import lombok.SneakyThrows;
 import org.hamcrest.MatcherAssert;
@@ -32,10 +30,12 @@ import ru.unit_techno.car_entry_control.utils.BaseTestClass;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.any;
+
 public class EventControllerTest extends BaseTestClass {
 
     public static final String BASE_URL = "/v1/";
-    public static final String EVENT = BASE_URL + "event";
+    public static final String EVENT = BASE_URL + "api/rfid/event";
 
     @MockBean
     private DeviceResource deviceResource;
