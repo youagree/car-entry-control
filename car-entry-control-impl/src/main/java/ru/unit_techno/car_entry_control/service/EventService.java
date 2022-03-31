@@ -127,9 +127,8 @@ public class EventService {
 
     @SneakyThrows
     @Transactional
-    public RfidLabel rfidExceptionCheck(Optional<RfidLabel> rfidLabel) {
+    public void rfidExceptionCheck(Optional<RfidLabel> rfidLabel) {
         if (rfidLabel.isEmpty()) {
-            log.info("rdif label is {}", rfidLabel.get());
             log.info("rfidLabel is empty, not exist");
             //todo нотифекейшн попытка по неизвестной метке
             throw new EntityNotFoundException("this rfid label is not in the database");
@@ -140,6 +139,5 @@ public class EventService {
             log.info("rfidLabel is not active");
             throw new RfidAccessDeniedException("this rfid label is not active");
         }
-        return rfidLabel.get();
     }
 }
