@@ -9,6 +9,6 @@ public class RfidEntry {
     @JsonProperty("deviceId")
     private Long deviceId;
 
-    @JsonProperty("rfid")
+    @JsonProperty("rfidLabel")
     private Long rfid;
 }
