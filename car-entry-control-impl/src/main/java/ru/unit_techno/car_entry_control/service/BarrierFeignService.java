@@ -12,9 +12,12 @@ import ru.unit.techno.ariss.barrier.api.dto.BarrierRequestDto;
 import ru.unit.techno.ariss.log.action.lib.api.LogActionBuilder;
 import ru.unit.techno.ariss.log.action.lib.config.DeviceEventConfig;
 import ru.unit.techno.ariss.log.action.lib.model.ActionStatus;
+import ru.unit.techno.ariss.log.action.lib.model.EntryType;
 import ru.unit.techno.ariss.log.action.lib.model.MetaObject;
 import ru.unit_techno.car_entry_control.dto.request.RfidEntry;
 import ru.unit_techno.car_entry_control.entity.RfidLabel;
+
+import java.util.Optional;
 
 import static ru.unit_techno.car_entry_control.util.Constant.RFID_UNKNOWN_EXCEPTION_MESSAGE;
 
@@ -39,7 +42,9 @@ public class BarrierFeignService {
                     rfidLabel.getCar().getGovernmentNumber(),
                     ActionStatus.ACTIVE);
         } catch (FeignException e) {
-            MetaObject metaObject = eventConfig.getType().get(barrierRequestDto.getBarrierId());
+            MetaObject metaObject = Optional.ofNullable(eventConfig.getType().get(barrierRequestDto.getBarrierId())).orElse(
+                    new MetaObject().setEntryType(EntryType.UNKNOWN).setInfo("неизвестная ошибка")
+            );
             notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), barrierRequestDto.getBarrierId(), RFID_UNKNOWN_EXCEPTION_MESSAGE);
             log.error("Service not available", e);
             actionCatchService.catchActionWhenFeignException(entry, rfidLabel, ActionStatus.ACTIVE, e);
