@@ -34,7 +34,7 @@ public class CatchActionCommonService {
         log.error("unknown rfid label", e);
         MetaObject metaObject = Optional.ofNullable(eventConfig.getType().get(rfidLabel.getDeviceId()))
                 .orElse(new MetaObject().setEntryType(EntryType.UNKNOWN).setInfo("неизвестная ошибка"));
-
+        log.info("send notification to websocket with props, rfid: {}, ex is {}", rfidLabel, e);
         notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), rfidLabel.getDeviceId(), RFID_NOT_FOUND_MESSAGE);
         actionCatchService.catchAction(rfidLabel, new RfidLabel()
                         .setCar(new Car()
@@ -45,6 +45,7 @@ public class CatchActionCommonService {
 
     @Transactional(value = Transactional.TxType.REQUIRES_NEW)
     public void rfidAccessDeniedCatchAndSave(RfidEntry rfidLabel, RfidLabel longRfidLabel, ActionStatus actionStatus, RfidAccessDeniedException e) {
+        log.info("send notification to websocket with props, rfid: {}, ex is {}", rfidLabel, e);
         notificationService.sendNotActive(longRfidLabel.getRfidLabelValue(), RFID_NOT_ACTIVE_MESSAGE);
         log.error("rfid label not active", e);
         actionCatchService.catchAction(rfidLabel, longRfidLabel, actionStatus, e);
@@ -52,7 +53,10 @@ public class CatchActionCommonService {
 
     @Transactional(value = Transactional.TxType.REQUIRES_NEW)
     public void feignExceptionCheckAndSave(RfidEntry rfidLabel, Optional<RfidLabel> label, FeignException e) {
-        MetaObject metaObject = eventConfig.getType().get(rfidLabel.getDeviceId());
+        MetaObject metaObject = Optional.ofNullable(eventConfig.getType().get(rfidLabel.getDeviceId())).orElse(
+                new MetaObject().setEntryType(EntryType.UNKNOWN).setInfo("неизвестная ошибка")
+        );
+        log.info("send notification to websocket with props, rfid: {}, ex is {}", rfidLabel, e);
         notificationService.sendActiveButSomethingUnavailable(metaObject.getInfo(), rfidLabel.getDeviceId(), RFID_UNKNOWN_EXCEPTION_MESSAGE);
         log.error("Service not available", e);
         actionCatchService.catchActionWhenFeignException(rfidLabel, label.get(), ActionStatus.ACTIVE, e);
