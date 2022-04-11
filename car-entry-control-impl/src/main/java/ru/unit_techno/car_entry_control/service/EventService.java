@@ -48,7 +48,6 @@ public class EventService {
         Long longRfidLabel = rfidLabel.getRfid();
         log.info("rfid id is: {}", longRfidLabel);
         Optional<RfidLabel> label = rfidLabelRepository.findByRfidLabelValue(longRfidLabel);
-        log.info("rfid is: {}", label.get());
         try {
             rfidExceptionCheck(label);
             RfidLabel existRfid = label.get();
