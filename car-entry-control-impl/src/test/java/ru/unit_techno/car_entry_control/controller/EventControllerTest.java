@@ -141,7 +141,6 @@ public class EventControllerTest extends BaseTestClass {
         Assertions.assertEquals(recordedError.getCommonId(), 124L);
         Assertions.assertEquals(recordedError.getGosNumber(), "А777АА77");
         Assertions.assertEquals(recordedError.getEventType(), "ВЫЕЗД");
-        Assertions.assertEquals(recordedError.getEventType(), "НЕИЗВЕСТНО");
         Description description = recordedError.getDescription();
         Assertions.assertEquals(description.getMessage(), "Barrier exception");
         Assertions.assertEquals(description.getStatusCode(), "500");
@@ -185,7 +184,6 @@ public class EventControllerTest extends BaseTestClass {
         Assertions.assertEquals(recordedError.getCommonId(), 124L);
         Assertions.assertEquals(recordedError.getGosNumber(), "А777АА77");
         Assertions.assertEquals(recordedError.getEventType(), "ВЫЕЗД");
-        Assertions.assertEquals(recordedError.getEventType(), "НЕИЗВЕСТНО");
         Description description = recordedError.getDescription();
         Assertions.assertEquals(description.getMessage(), "Barrier exception");
         Assertions.assertEquals(description.getStatusCode(), "500");
