@@ -24,7 +24,7 @@ public class ActionCatchService {
         logActionBuilder.buildActionObjectAndLogAction(
                 rfidLabel.getDeviceId(),
                 rfidLabel.getRfid(),
-                rfid.getCar().getGovernmentNumber(),
+                rfid.getCar() != null ? rfid.getCar().getGovernmentNumber() : "НЕТ НОМЕРА",
                 actionStatus,
                 true,
                 new Description()
