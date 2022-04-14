@@ -76,7 +76,7 @@ public class EventService {
 
     @Transactional
     @SneakyThrows
-    public void create() {
+    public String create() {
         log.info("start create new rfid label");
 
         DeviceResponseDto entryDevice = deviceResource.getReaderDeviceId();
@@ -119,7 +119,7 @@ public class EventService {
             //todo add timestamp
             rfidLabelRepository.save(newRfidLabel);
             log.info("successfully create new rfid label, {}, status is NEW, you need to activate this rfid", newRfidLabel);
-            return;
+            return String.valueOf(newRfidLabel.getRfidLabelValue());
         }
         throw new EntityExistsException("rfid label is already exist");
     }

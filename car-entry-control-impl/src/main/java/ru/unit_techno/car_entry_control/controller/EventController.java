@@ -29,7 +29,7 @@ public class EventController {
     // todo переделать урл
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createRfidLabel() {
-        eventService.create();
+    public String createRfidLabel() {
+        return eventService.create();
     }
 }
