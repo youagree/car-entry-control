@@ -27,9 +27,9 @@ spring:
           literal_handling_mode: BIND
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/unit_techno?currentSchema=car_entry_control
-    username: car_entry_admin
-    password: squd
+    url: ${DATASOURCE_MAIN_DSN:jdbc:postgresql://localhost:5432/unit_techno?currentSchema=car_entry_control}
+    username: ${DATASOURCE_MAIN_USERNAME:car_entry_admin}
+    password: ${DATASOURCE_MAIN_PASSWORD:squd}
 
 eureka:
   client:
