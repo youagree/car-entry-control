@@ -20,7 +20,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/gs-guide-websocket")
                 .setAllowedOrigins(
                         "http://localhost:3000",
-                        "https://ariss.lifo.ml"
+                        "https://ariss.lifo.ml",
+                        "http://10.240.65.254"
                 )
                 .withSockJS();
     }
