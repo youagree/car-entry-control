@@ -11,4 +11,6 @@ public class Constant {
     public static final String RFID_NOT_FOUND_MESSAGE = "Попытка вьезда по неизвестной rfid метке";
     public static final String RFID_NOT_ACTIVE_MESSAGE = "rfid метка неактивна, необходимо активировать ее";
     public static final String RFID_UNKNOWN_EXCEPTION_MESSAGE = "Произошла неизвестная ошибка";
+
+
 }
